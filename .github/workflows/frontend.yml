@@ -1,0 +1,75 @@
+name: Build and Deploy Frontend to GKE
+on:
+  push:
+    branches: 
+      - front-cd-test
+    paths:
+      - '**/frontend_test/**'
+      - '**/frontend.yml'
+
+# Environment variables
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT_ID }}
+  SA_KEY: ${{ secrets.GKE_SA_KEY }}
+  CLUSTER_NAME: quick-parking-cluster
+  CLUSTER_ZONE: asia-east1-a
+  DEPLOYMENT_NAME: frontend-deployment
+  IMAGE: frontend
+  SOURCE_PATH: frontend_test
+
+jobs:
+  build-and-deploy:
+    name: Build & Push Image, Deploy frontend
+    runs-on: ubuntu-latest
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Setup gcloud CLI
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ env.SA_KEY }}
+
+      # Configure Docker to use the gcloud command-line tool as a credential helper for authentication
+      - name: Configure docker
+        run: gcloud --quiet auth configure-docker
+    
+      # Get the GKE credentials so we can deploy to the cluster
+      - name: Get the GKE credentials
+        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.CLUSTER_ZONE }}
+          credentials: ${{ env.SA_KEY }}
+
+      - name: Build and push the docker image
+        run: |
+          docker build \
+            --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
+            --build-arg GITHUB_SHA="$GITHUB_SHA" \
+            --build-arg GITHUB_REF="$GITHUB_REF" \
+            $SOURCE_PATH
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+      
+      # Set up kustomize and credential
+      - name: Set up Kustomize
+        run: |
+          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          chmod u+x ./kustomize
+      
+      # Deploy
+      - name: Create the frontend deployment and service
+        run: |
+          cd $SOURCE_PATH
+          ../kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+          ../kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment/$DEPLOYMENT_NAME
+          kubectl get services -o wide
