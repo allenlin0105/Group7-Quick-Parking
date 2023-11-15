@@ -31,12 +31,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Setup gcloud CLI
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@1bee7de035d65ec5da40a31f8589e240eba8fde5
+      - name: Auth for GCP
+        uses: google-github-actions/auth@v1
         with:
-          project_id: ${{ env.PROJECT_ID }}
-          service_account_key: ${{ env.SA_KEY }}
+          credentials_json: ${{ env.SA_KEY }}
 
       # Configure Docker to use the gcloud command-line tool as a credential helper for authentication
       - name: Configure docker
@@ -48,7 +46,7 @@ jobs:
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.CLUSTER_ZONE }}
-          credentials: ${{ env.SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
 
       - name: Build and push the docker image
         run: |
