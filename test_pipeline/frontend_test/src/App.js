@@ -1,5 +1,16 @@
 import logo from './logo.svg';
 import './App.css';
+import axios from "axios";
+
+async function click() {
+  try {
+    const Data = await axios.get("/api/test");
+    const data = Data.data;
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 function App() {
   return (
@@ -17,7 +28,11 @@ function App() {
         >
           Learn React
         </a>
+        <button onClick={click}>
+          See console
+        </button>
       </header>
+      
     </div>
   );
 }
