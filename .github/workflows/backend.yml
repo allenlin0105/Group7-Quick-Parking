@@ -1,11 +1,11 @@
-name: Build and Deploy Frontend to GKE
+name: Build and Deploy Backend to GKE
 on:
   push:
     branches: 
       - front-cd-test
     paths:
-      - '**/frontend_test/**'
-      - '**/frontend.yml'
+      - '**/backend_test/**'
+      - '**/backend.yml'
 
 # Environment variables
 env:
@@ -13,13 +13,13 @@ env:
   SA_KEY: ${{ secrets.GKE_SA_KEY }}
   CLUSTER_NAME: quick-parking-cluster
   CLUSTER_ZONE: asia-east1-a
-  DEPLOYMENT_NAME: frontend-deployment
-  IMAGE: frontend
-  SOURCE_PATH: test_pipeline/frontend_test
+  DEPLOYMENT_NAME: backend-deployment
+  IMAGE: backend
+  SOURCE_PATH: test_pipeline/backend_test
 
 jobs:
   build-and-deploy:
-    name: Build & Push Image, Deploy frontend
+    name: Build & Push Image, Deploy backend
     runs-on: ubuntu-latest
 
     # Add "id-token" with the intended permissions.
@@ -51,7 +51,6 @@ jobs:
       - name: Build and push the docker image
         run: |
           docker build \
-            -f $SOURCE_PATH/Dockerfile_full \
             --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
