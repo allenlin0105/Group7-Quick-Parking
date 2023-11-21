@@ -23,7 +23,6 @@ spec:
           # based on CPU utilization
             requests:
               cpu: "150m"
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/usr/sbin/nginx","-s","quit"]
+          ports:
+            - name: http
+              containerPort: 3000
