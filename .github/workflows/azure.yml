@@ -1,19 +1,31 @@
-name: Test authentication
+name: Build and deploy to Azure Kubernetes Service
 on: [push]
+
+env:
+  IMAGE_NAME: frontend
+  SOURCE_PATH: test_pipeline/frontend_test
+
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
-        - name: Check out repository
-          uses: actions/checkout@v3.6.0
+    - name: Checkout
+      uses: actions/checkout@v4
 
-        - name: 'Log into Azure using github secret AZURE_CREDENTIALS'
-          uses: Azure/login@v1
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-            enable-AzPSSession: true
+    - name: Log into Azure
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true
 
-        - name: 'Run az commands'
-          run: |
-            az account show
-            az group list
+    - name: Build image on ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        docker build ${{ env.SOURCE_PATH }} \
+          --tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          
