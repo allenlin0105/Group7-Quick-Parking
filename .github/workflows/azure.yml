@@ -54,5 +54,5 @@ jobs:
         cd $SOURCE_PATH
         kustomize edit set image frontend-image=${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         kustomize build . | kubectl apply -f -
-        kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }}
+        kubectl rollout status deployment ${{ env.DEPLOYMENT_NAME }}
         kubectl get services -o wide
