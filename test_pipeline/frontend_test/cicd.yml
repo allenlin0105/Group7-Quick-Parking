@@ -42,3 +42,5 @@ spec:
             preStop:
               exec:
                 command: ["/usr/sbin/nginx","-s","quit"]
+      imagePullSecrets:
+        - name: acr-secret
