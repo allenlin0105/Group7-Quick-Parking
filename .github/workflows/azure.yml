@@ -52,7 +52,7 @@ jobs:
       run: |
         curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
         cd $SOURCE_PATH
-        kustomize edit set image frontend-image:TAG=${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        kustomize edit set image REGISTRY/IMAGE:TAG=${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         kustomize build . | kubectl apply -f -
         kubectl rollout status deployment ${{ env.DEPLOYMENT_NAME }}
         kubectl get services -o wide
