@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: frontend-image
+          image: frontend-image:TAG
           resources:
           # You must specify requests for CPU to autoscale
           # based on CPU utilization
