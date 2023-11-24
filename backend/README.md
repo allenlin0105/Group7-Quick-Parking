@@ -11,6 +11,11 @@ available_space
 curl localhost:3000/available_space
 ```
 
+parking_lot_size
+```sh
+curl localhost:3000/parking_lot_size
+```
+
 park
 ```sh
 curl -H "Content-Type: application/json" -X POST -d '{"plate":"xxx", "space_id":xxx}' localhost:3000/park
@@ -23,5 +28,20 @@ curl -H "Content-Type: application/json" -X POST -d '{"space_id":xxx}' localhost
 
 find_car
 ```sh
-curl -H "Content-Type: application/json" -X POST -d '{"plate":"xxx"}' localhost:3000/park
+curl -H "Content-Type: application/json" -X GET -d '{"plate":"xxx"}' localhost:3000/find_car
+```
+
+space_info
+```sh
+curl -H "Content-Type: application/json" -X GET -d '{"space_id":xxx}' localhost:3000/space_info
+```
+
+usage_rate
+```sh
+curl localhost:3000/usage_rate
+```
+
+login
+```sh
+curl -H "Content-Type: application/json" -X POST -d '{"id":"xxx", "passwd":"xxx"}' localhost:3000/login
 ```
