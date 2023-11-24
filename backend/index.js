@@ -144,16 +144,38 @@ async function find_car(parking_lot_id, plate){
 }
 
 async function space_info(parking_lot_id, space_id){
-    const date = new Date();
-    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0); // begin of today
-    const begin_time = today.getTime() - 1000 * 3600 * 24 * 6; // a weak ago;
+    const time = new Date();
+    const today = new Date(time.getFullYear(), time.getMonth(), time.getDate(), 0); // begin of today
+    const day_delta = 1000 * 3600 * 24;
+    const start_time = today.getTime() - day_delta * 6; // a weak ago;
     const usage_query = {
         parking_lot_id : parking_lot_id,
         space_id : space_id,
-        end_time : { $gte : begin_time},
+        end_time : { $gte : start_time},
     }
-    const usage_list = await usage_coll.find(usage_query);
-    return usage_list;
+    let usage_list = await usage_coll.find(usage_query).sort({start_time : 1});
+    usage_list = await usage_list.toArray();
+    console.log(usage_list);
+
+    // calculate utility for the passed week
+    let results = Array(7);
+    let day_start = start_time;
+    let day_end = start_time + day_delta;
+    for(let i = 0; i < 7; i++){
+        let date = (new Date(day_start)).getDate();
+        let time_sum = 0;
+        while(usage_list.length && usage_list[0].start_time < day_end){
+            time_sum += Math.min(usage_list[0].end_time, day_end) - usage_list[0].start_time;
+            usage_list[0].start_time = Math.min(day_end, usage_list[0].end_time);
+            if(usage_list[0].start_time == usage_list[0].end_time)
+                usage_list.shift();
+        }
+        results[i] = {date : date, utility : time_sum / day_delta};
+        day_start = day_end;
+        day_end = Math.min(day_end + day_delta, Date.now());
+    }
+
+    return results;
 }
 
 async function usage_rate(parking_lot_id){
@@ -235,16 +257,9 @@ app.post('/space_info', async(req, res) => {
     const parking_lot_id = 0;
     const space_id = req.body.space_id;
     console.log('GET/space_info');
-    let result = (await space_info(parking_lot_id, space_id));
-    result = await result.toArray();
+    const result = (await space_info(parking_lot_id, space_id));
 
-    /*
-    let use_rates = Array(7);
-    for(let i = 0; i < 7; i++){
-        
-    }*/
-
-    console.log(result)
+    //console.log(result)
     res.send(result);
 })
 
