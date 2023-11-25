@@ -1,8 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: quick-parking
+    tier: frontend
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-deployment
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: quick-parking
@@ -17,7 +32,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: gcr.io/PROJECT_ID/IMAGE:TAG
+          image: REGISTRY/IMAGE:TAG
           resources:
           # You must specify requests for CPU to autoscale
           # based on CPU utilization
@@ -27,3 +42,5 @@ spec:
             preStop:
               exec:
                 command: ["/usr/sbin/nginx","-s","quit"]
+      imagePullSecrets:
+        - name: acr-secret

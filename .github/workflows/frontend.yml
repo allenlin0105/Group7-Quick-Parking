@@ -1,75 +1,63 @@
-name: Build and Deploy Frontend to GKE
+name: Build and deploy frontend to Azure Kubernetes Service
+
 on:
   push:
-    branches: 
-      - front-cd-test
     paths:
       - '**/frontend_test/**'
       - '**/frontend.yml'
 
-      
-# Environment variables
 env:
-  PROJECT_ID: ${{ secrets.GKE_PROJECT_ID }}
-  SA_KEY: ${{ secrets.GKE_SA_KEY }}
-  CLUSTER_NAME: quick-parking-cluster
-  CLUSTER_ZONE: asia-east1-a
+  IMAGE_NAME: frontend
+  SOURCE_PATH: frontend_test
+  CLUSTER_NAME: QuickParkingCluster
   DEPLOYMENT_NAME: frontend-deployment
-  IMAGE: frontend
-  SOURCE_PATH: test_pipeline/frontend_test
 
 jobs:
-  build-and-deploy:
-    name: Build & Push Image, Deploy frontend
+  build:
     runs-on: ubuntu-latest
-
-    # Add "id-token" with the intended permissions.
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Auth for GCP
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ env.SA_KEY }}
+    - name: Log into Azure
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true
 
-      # Configure Docker to use the gcloud command-line tool as a credential helper for authentication
-      - name: Configure docker
-        run: gcloud --quiet auth configure-docker
-    
-      # Get the GKE credentials so we can deploy to the cluster
-      - name: Get the GKE credentials
-        uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
-        with:
-          cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.CLUSTER_ZONE }}
-          project_id: ${{ env.PROJECT_ID }}
+    - name: Build image on ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        docker build ${{ env.SOURCE_PATH }} \
+          --tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:stable
+        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:stable
 
-      - name: Build and push the docker image
-        run: |
-          docker build \
-            --file $SOURCE_PATH/Dockerfile_full \
-            --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
-            --build-arg GITHUB_SHA="$GITHUB_SHA" \
-            --build-arg GITHUB_REF="$GITHUB_REF" \
-            $SOURCE_PATH
-          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
-      
-      # Set up kustomize and credential
-      - name: Set up Kustomize
-        run: |
-          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-          chmod u+x ./kustomize
-      
-      # Deploy
-      - name: Create the deployment and service
-        run: |
-          cd $SOURCE_PATH
-          ../../kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
-          ../../kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment/$DEPLOYMENT_NAME
-          kubectl get services -o wide
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+
+    - name: Setup kubelogin
+      uses: azure/use-kubelogin@v1
+      with:
+        kubelogin-version: 'v0.0.29'
+
+    - name: Set AKS context
+      id: set-context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: ${{ env.CLUSTER_NAME }}
+        admin: 'false'
+        use-kubelogin: 'true'
+
+    - name: Deploy image using Kustomize
+      run: |
+        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+        cd $SOURCE_PATH
+        kustomize edit set image REGISTRY/IMAGE:TAG=${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:stable
+        kustomize build . | kubectl apply -f -
+        kubectl rollout status deployment ${{ env.DEPLOYMENT_NAME }}
+        kubectl get services -o wide
