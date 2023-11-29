@@ -1,6 +1,16 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 
+async function click() {
+  try {
+    const Data = await axios.get("/api/test");
+    const data = Data.data;
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export default function Home() {
     // todo: a pop up login here.
     return (
@@ -21,6 +31,11 @@ export default function Home() {
               警衛
             </button>
           </Link>
+          </div>
+          <div>
+            <button onClick={click}>
+              See console
+            </button>
           </div>
         </nav>
       </div>
