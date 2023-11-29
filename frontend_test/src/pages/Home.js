@@ -18,6 +18,11 @@ export default function Home() {
       <div className='center'>
         <h1>Quick Parking</h1>
         <h2>你的身份是...</h2>
+        <div>
+          <button onClick={click}>
+            See console
+          </button>
+        </div>
         <nav>
           <div>
           <Link to="/carowner">
@@ -32,11 +37,6 @@ export default function Home() {
               警衛
             </button>
           </Link>
-          </div>
-          <div>
-            <button onClick={click}>
-              See console
-            </button>
           </div>
         </nav>
       </div>
