@@ -35,7 +35,7 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
         touch ${{ env.SOURCE_PATH }}/.env
-        echo ENGINE_API_KEY=${{ secrets.AZURE_MONGO_URL }} >> ${{ env.SOURCE_PATH }}/.env
+        echo MONGO_URL=${{ secrets.AZURE_MONGO_URL }} >> ${{ env.SOURCE_PATH }}/.env
         docker build ${{ env.SOURCE_PATH }} \
           --tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
