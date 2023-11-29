@@ -2,6 +2,8 @@ name: Build and deploy backend to Azure Kubernetes Service
 
 on:
   push:
+    branches: 
+      - front-cd-test
     paths:
       - '**/backend/**'
       - '**/backend.yml'
