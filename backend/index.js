@@ -7,6 +7,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/*
+Some updates that you need to add to your file
+- install dotenv package and load it
+- change url=process.env.MONGO_URL
+The other implementations can remain the same.
+*/
+
 // Load environment variable
 require('dotenv').config()
 
@@ -15,12 +22,14 @@ const { MongoClient } = require('mongodb');
 const url = process.env.MONGO_URL
 const client = new MongoClient(url);
 
-const dbName = 'parkingDB';
-const collectionName = "parkingLot";
+// This is for testing, and you should set your own db and table
+const dbName = 'testDB';
+const collectionName = "testCollection";
 
 const database = client.db(dbName);
 const collections = database.collection(collectionName);
 
+// Implementation details
 async function setup() {
     try {
       const doc = {key: 1};
@@ -49,16 +58,6 @@ async function get_test() {
         console.log(error);
     }
 }
-
-// MongoClient.connect(url, (err, connectedClient) => {
-//     if (err){
-//         throw err;
-//     }
-
-//     console.log("connect to mongo");
-//     db = connectedClient.db("testDB");
-//     collections = database.collections(collectionName);
-// });
 
 app.get('/test', async (req, res) => {
     console.log('GET /test');
