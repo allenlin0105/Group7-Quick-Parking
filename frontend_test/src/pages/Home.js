@@ -16,7 +16,7 @@ export default function Home() {
     // todo: a pop up login here.
     return (
       <div className='center'>
-        <h1>Quick Parking</h1>
+        <h1>Quick Parking!</h1>
         <h2>你的身份是...</h2>
         <div>
           <button onClick={click}>
