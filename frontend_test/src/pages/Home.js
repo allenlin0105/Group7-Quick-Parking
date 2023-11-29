@@ -1,6 +1,7 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 
+import axios from "axios";
 async function click() {
   try {
     const Data = await axios.get("/api/test");
