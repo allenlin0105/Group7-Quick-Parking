@@ -39,3 +39,5 @@ spec:
           ports:
             - name: http
               containerPort: 3000
+      imagePullSecrets:
+        - name: acr-secret
