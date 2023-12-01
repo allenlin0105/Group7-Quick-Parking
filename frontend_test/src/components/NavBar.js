@@ -29,7 +29,7 @@ const Navbar = ({home, search, searchCallBack}) => {
       display: 'flex',
       alignItems: 'center',
       padding: '10px',
-      margin: '-10px',
+      // margin: '-10px',
       backgroundClip: 'border-box',
     }}>
     {!home && (

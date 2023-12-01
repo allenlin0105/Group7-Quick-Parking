@@ -1,0 +1,37 @@
+.fc-daygrid-day-events {
+  margin-top: 1em !important;
+}
+
+.all-day-event {
+  border: 0;
+  color: black;
+  font-weight: bold;
+}
+
+.all-day-event-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: white;
+}
+
+.non-all-day-event-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 0.5em;
+  overflow: hidden;
+}
+
+.car-number {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.details {
+  font-size: 16px;
+}
