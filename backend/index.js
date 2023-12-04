@@ -9,12 +9,17 @@ app.use(express.urlencoded({ extended: true }));
 
 const config = require("./config.json");
 
+// Load environment variable
+require('dotenv').config()
+
+// Mongo setup
 const { MongoClient } = require('mongodb');
-const url = 'mongodb://127.0.0.1:27017';
+//const url = 'mongodb://127.0.0.1:27017';
+const url = process.env.MONGO_URL
 const client = new MongoClient(url);
 const dbName = 'parkingDB';
-
 const database = client.db(dbName);
+
 const parking_lot_coll = database.collection("parkingLot");
 const usage_coll = database.collection("usage");
 const guard_coll = database.collection("guard");
@@ -34,6 +39,7 @@ async function setup() {
 	for (let index = 0; index < n_parking_lots; index++) {
 		const parking_lot = {
 			parking_lot_id: index,
+            size: n_spaces,
 			space_is_available: Array(n_spaces).fill(true),
 			license_plate_nums: Array(n_spaces).fill(""),
 			start_time: Array(n_spaces).fill(0),
@@ -50,7 +56,7 @@ async function setup() {
 			`Parking lot initialized.`,
 		);
 	}
-
+    
     const guards = config.guards;
     for(let i = 0; i < config.guards.length; i++){
         const guard = {
@@ -83,20 +89,13 @@ async function get_available_space(parking_lot_id) {
 
 async function get_total_space(parking_lot_id) {
     const parking_lot = await parking_lot_coll.findOne({parking_lot_id: parking_lot_id});
-    return parking_lot.space_is_available.length;
+    return parking_lot.size;
 }
 
 async function park(parking_lot_id, space_id, plate) {
 	const parking_lot_query = {parking_lot_id : parking_lot_id};
 	const parking_lot = await parking_lot_coll.findOne(parking_lot_query);
 	if (parking_lot.space_is_available[space_id]) {
-        const usage = {
-            parking_lot_id : parking_lot_id,
-            space_id : space_id,
-            plate : plate,
-            start_time : Date.now(),
-            end_time : Infinity,
-        };
 		let result = await parking_lot_coll.updateOne(
 			parking_lot_query, 
 			{
@@ -108,6 +107,13 @@ async function park(parking_lot_id, space_id, plate) {
             },
 		);
 
+        const usage = {
+            parking_lot_id : parking_lot_id,
+            space_id : space_id,
+            plate : plate,
+            start_time : Date.now(),
+            end_time : Number.MAX_VALUE,
+        };
         result = await usage_coll.insertOne(usage);
 		
 		return space_id;
@@ -135,7 +141,7 @@ async function leave(parking_lot_id, space_id) {
         parking_lot_id : parking_lot_id,
         space_id : space_id,
         plate : parking_lot.license_plate_nums[space_id],
-        end_time : Infinity,
+        end_time : Number.MAX_VALUE,
     };
     const time = Date.now()
     result  = await usage_coll.updateOne(
@@ -173,8 +179,10 @@ async function space_info(parking_lot_id, space_id){
         space_id : space_id,
         end_time : { $gte : start_time},
     }
-    let usage_list = await usage_coll.find(usage_query).sort({start_time : 1});
+    let usage_list = await usage_coll.find(usage_query);//.sort({start_time : 1});
     usage_list = await usage_list.toArray();
+    // sort by start_time by ascending order
+    usage_list.sort((a,b) => (a.start_time > b.start_time) ? 1 : ((b.start_time > a.start_time) ? -1 : 0))
 
     // calculate utility for the passed week
     let results = Array(7);
@@ -184,7 +192,7 @@ async function space_info(parking_lot_id, space_id){
         let date = (new Date(day_start)).getDate();
         let time_sum = 0;
         while(usage_list.length && usage_list[0].start_time < day_end){
-            time_sum += Math.min(usage_list[0].end_time, day_end) - usage_list[0].start_time;
+            time_sum += Math.min(usage_list[0].end_time, day_end) - Math.max(usage_list[0].start_time, day_start);
             usage_list[0].start_time = Math.min(day_end, usage_list[0].end_time);
             if(usage_list[0].start_time == usage_list[0].end_time)
                 usage_list.shift();
@@ -213,7 +221,7 @@ async function usage_rate(parking_lot_id){
             start_time : { $lt : time } ,
         }
         let n_cars = await usage_coll.countDocuments(usage_query);
-        results[i] = { hour : hour, usage_rate : n_cars / parking_lot.space_is_available.length, };
+        results[i] = { hour : hour, usage_rate : n_cars / parking_lot.size, };
         hour = (hour - 1 + 24) % 24;
         time -= 1000 * 3600;
     }
