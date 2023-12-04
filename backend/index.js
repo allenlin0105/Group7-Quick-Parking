@@ -56,20 +56,20 @@ async function setup() {
 			`Parking lot initialized.`,
 		);
 	}
-    /*
+    
     const guards = config.guards;
     for(let i = 0; i < config.guards.length; i++){
         const guard = {
-            id: guards[i].id,
+            guard_id: guards[i].id,
             passwd: guards[i].passwd,
             login: false,
         }
-        const result = await guard_coll.updateOne(
-            { id : guards[i].id},
+        const result = await parking_lot_coll.updateOne(
+            { guard_id : guards[i].id},
             { $setOnInsert: guard},
             {upsert: true},
         );
-    }*/
+    }
 }
 
 async function get_available_space(parking_lot_id) {
@@ -191,6 +191,7 @@ async function space_info(parking_lot_id, space_id){
     for(let i = 0; i < 7; i++){
         let date = (new Date(day_start)).getTime();
         let time_sum = 0;
+        // calculate utility(usage) of a day
         while(usage_list.length && usage_list[0].start_time < day_end){
             time_sum += Math.min(usage_list[0].end_time, day_end) - Math.max(usage_list[0].start_time, day_start);
             usage_list[0].start_time = Math.min(day_end, usage_list[0].end_time);
@@ -211,8 +212,9 @@ async function usage_rate(parking_lot_id){
 	const parking_lot = await parking_lot_coll.findOne(parking_lot_query);
 
     let time = Date.now();
-    let date = new Date()
-    let hour  = date.getHours();
+    //let date = new Date()
+    //let hour  = date.getHours();
+    let hour = parseInt(DateTime.fromMillis(time).setZone('Asia/Taipei').toISO().split('T')[1].split(':')[0])
 
     let results = Array(7);
     for(let i = 0; i < 7; i++){
@@ -229,19 +231,19 @@ async function usage_rate(parking_lot_id){
             date_str = DateTime.fromMillis(time).setZone('Asia/Taipei').toISO().split('T')[0]
             time -= 1000 * 3600;
             if(hour == 0){
-                hour = (new Date(time)).getHours()
+                hour = 23;
                 results[i] = { date : date_str, daily_results };
                 break;
             }
-            hour = (new Date(time)).getHours()
+            hour--;
         }
     }
     return results;
 }
 
 async function login(id, passwd){
-    const guard = {id : id, passwd : passwd};
-    const result = await guard_coll.findOne(guard);
+    const guard = {guard_id : id, passwd : passwd};
+    const result = await parking_lot_coll.findOne(guard);
     if(result)
         return true;
     return false;
