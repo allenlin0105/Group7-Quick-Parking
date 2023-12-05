@@ -1,16 +1,15 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { format } from 'date-fns';
-import { zhTW } from 'date-fns/locale';
-import locale from '@fullcalendar/core/locales/zh-tw';
+import { calculateDurationInHours } from "./lib/utils"
 
 export const EventContent = ({ eventInfo }) => {
   const contentRef = useRef(null);
-  const calculateDurationInHours = (startTime, endTime) => {
-    const startDate = new Date(startTime);
-    const endDate = new Date(endTime);
-    const duration = (endDate - startDate) / 1000 / 60 / 60; // Convert milliseconds to hours
-    return duration;
-  };
+  // const calculateDurationInHours = (startTime, endTime) => {
+  //   const startDate = new Date(startTime);
+  //   const endDate = new Date(endTime);
+  //   const duration = ((endDate - startDate) / 1000 / 60 / 60).toFixed(1); // Convert milliseconds to hours
+  //   return duration;
+  // };
 
   useEffect(() => {
     if (contentRef.current) {

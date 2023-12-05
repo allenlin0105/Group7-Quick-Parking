@@ -7,7 +7,7 @@ export default function Home() {
             {/* <h1>
                 todo: 加上警衛主頁
             </h1> */}
-            <History />
+            <History spaceId={4}/>
         </>
     )
 }
