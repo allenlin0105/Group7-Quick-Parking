@@ -1,8 +1,11 @@
 {
+    "n_parking_lots": 1,
+    "parking_lot_size": [10],
     "guards": [
         {
             "id": "group7",
             "passwd": "1234"
         }
-    ]
+    ],
+    "reset": true
 }

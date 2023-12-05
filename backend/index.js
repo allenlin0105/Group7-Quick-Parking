@@ -9,6 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const { DateTime } = require("luxon");
 const config = require("./config.json");
+const sha256 = require('js-sha256');
 
 // Load environment variable
 require('dotenv').config()
@@ -22,23 +23,19 @@ const database = client.db(dbName);
 
 const parking_lot_coll = database.collection("parkingLot");
 const usage_coll = database.collection("usage");
-const guard_coll = database.collection("guard");
-
-const n_parking_lots = 1;
-const n_spaces = 10;
+//const guard_coll = database.collection("guard");
 
 function time_converter(timestamp) {
-	const date = new Date(timestamp);
-	const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZone: 'Asia/Taipei'};
-	const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
-	return formattedDate;
+	return DateTime.fromMillis(timestamp).setZone('Asia/Taipei').toISO();
 }
 
 
 async function setup() {
-	for (let index = 0; index < n_parking_lots; index++) {
+    const n_parking_lots = config.n_parking_lots;
+    for (let i = 0; i < n_parking_lots; i++) {
+        const n_spaces = config.parking_lot_size[i];
 		const parking_lot = {
-			parking_lot_id: index,
+			parking_lot_id: i,
             size: n_spaces,
 			space_is_available: Array(n_spaces).fill(true),
 			license_plate_nums: Array(n_spaces).fill(""),
@@ -48,7 +45,7 @@ async function setup() {
 		};
 		
 		const result = await parking_lot_coll.updateOne(
-            { parking_lot_id: index },
+            { parking_lot_id: i },
 			{ $setOnInsert: parking_lot },
 			{ upsert: true }
 		);
@@ -60,8 +57,8 @@ async function setup() {
     const guards = config.guards;
     for(let i = 0; i < config.guards.length; i++){
         const guard = {
-            guard_id: guards[i].id,
-            passwd: guards[i].passwd,
+            guard_id: sha256(guards[i].id),
+            passwd: sha256(guards[i].passwd),
             login: false,
         }
         const result = await parking_lot_coll.updateOne(
@@ -169,11 +166,12 @@ async function find_car(parking_lot_id, plate){
     return -1;
 }
 
-async function space_info(parking_lot_id, space_id){
+async function space_info(parking_lot_id, space_id, start_day, end_day){
     const time = new Date();
-    const today = DateTime.now().setZone('Asia/Taipei').startOf('day') // begin of today
+    const end_time = Math.min(DateTime.now().setZone('Asia/Taipei').toMillis(), DateTime.fromISO(end_day).setZone('Asia/Taipei').endOf('day').toMillis())
+    const start_time = DateTime.fromISO(start_day).setZone('Asia/Taipei').startOf('day').toMillis()
     const day_delta = 1000 * 3600 * 24;
-    const start_time = today.toMillis() - day_delta * 6; // a weak ago;
+    
     const usage_query = {
         parking_lot_id : parking_lot_id,
         space_id : space_id,
@@ -183,13 +181,13 @@ async function space_info(parking_lot_id, space_id){
     usage_list = await usage_list.toArray();
     // sort by start_time by ascending order
     usage_list.sort((a,b) => (a.start_time > b.start_time) ? 1 : ((b.start_time > a.start_time) ? -1 : 0))
-    let ret = Array.from(usage_list);
+    let ret = structuredClone(usage_list);
+
     // calculate utility for the passed week
-    let utilities = Array(7);
+    let utilities = Array();
     let day_start = start_time;
     let day_end = start_time + day_delta;
-    for(let i = 0; i < 7; i++){
-        let date = (new Date(day_start)).getTime();
+    while(day_start < end_time){
         let time_sum = 0;
         // calculate utility(usage) of a day
         while(usage_list.length && usage_list[0].start_time < day_end){
@@ -198,10 +196,10 @@ async function space_info(parking_lot_id, space_id){
             if(usage_list[0].start_time == usage_list[0].end_time)
                 usage_list.shift();
         }
-        date_str = DateTime.fromMillis(date).setZone('Asia/Taipei').toISO().split('T')[0]
-        utilities[i] = {date : date_str, utility : time_sum / day_delta};
+        date_str = DateTime.fromMillis(day_start).setZone('Asia/Taipei').toISO().split('T')[0]
+        utilities.push({date : date_str, utility : time_sum / day_delta});
         day_start = day_end;
-        day_end = Math.min(day_end + day_delta, Date.now());
+        day_end = Math.min(day_end + day_delta, end_time);
     }
 
     return {utilities, usage_list : ret};
@@ -217,8 +215,10 @@ async function usage_rate(parking_lot_id){
     let hour = parseInt(DateTime.fromMillis(time).setZone('Asia/Taipei').toISO().split('T')[1].split(':')[0])
 
     let results = Array(7);
+    //7 days
     for(let i = 0; i < 7; i++){
         let daily_results = Array(); 
+        //24 hours
         while(true){
             const usage_query = {
                 parking_lot_id : parking_lot_id,
@@ -242,7 +242,7 @@ async function usage_rate(parking_lot_id){
 }
 
 async function login(id, passwd){
-    const guard = {guard_id : id, passwd : passwd};
+    const guard = {guard_id : sha256(id), passwd : sha256(passwd)};
     const result = await parking_lot_coll.findOne(guard);
     if(result)
         return true;
@@ -312,8 +312,10 @@ app.get('/find_car', async (req, res) => {
 app.get('/space_info', async(req, res) => {
     const parking_lot_id = 0;
     const space_id = req.body.space_id;
+    const start_date = req.body.start_date;
+    const end_date = req.body.end_date;
+    const result = await space_info(parking_lot_id, space_id, start_date, end_date);
     console.log('GET/space_info');
-    const result = await space_info(parking_lot_id, space_id);
 
     for(let i = 0; i < result.usage_list.length; i++){
         result.usage_list[i].start_time = DateTime.fromMillis(result.usage_list[i].start_time).setZone('Asia/Taipei').toISO();
@@ -338,7 +340,9 @@ app.post('/login', async(req, res) => {
 })
 
 app.listen(port, async () => {
-	//await database.dropDatabase();
-    await setup();
+	if(config.reset){
+        await database.dropDatabase();
+        await setup();
+    }
     console.log("Server is listening on port " + port + '\n');
 });

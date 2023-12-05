@@ -33,7 +33,7 @@ curl -H "Content-Type: application/json" -X GET -d '{"plate":"xxx"}' localhost:3
 
 space_info
 ```sh
-curl -H "Content-Type: application/json" -X GET -d '{"space_id":xxx}' localhost:3000/space_info
+curl -H "Content-Type: application/json" -X GET -d '{"space_id":xxx, "start_date":"YYYY-MM-DD", "end_date":"YYYY-MM-DD"}' localhost:3000/space_info
 ```
 
 usage_rate
