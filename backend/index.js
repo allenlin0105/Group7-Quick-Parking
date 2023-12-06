@@ -207,38 +207,26 @@ async function space_info(parking_lot_id, space_id, start_day, end_day){
     return {utilities, usage_list : ret};
 }
 
-async function usage_rate(parking_lot_id){
+async function usage_rate(parking_lot_id, date){
     const parking_lot_query = {parking_lot_id : parking_lot_id};
 	const parking_lot = await parking_lot_coll.findOne(parking_lot_query);
 
-    let time = Date.now();
-    //let date = new Date()
-    //let hour  = date.getHours();
+    const end_time = Math.min(DateTime.now().setZone('Asia/Taipei').toMillis(), DateTime.fromISO(date).setZone('Asia/Taipei').endOf('day').toMillis());
+    const start_time = DateTime.fromISO(date).setZone('Asia/Taipei').startOf('day').toMillis();
+    
+    let time = end_time;
     let hour = parseInt(DateTime.fromMillis(time).setZone('Asia/Taipei').toISO().split('T')[1].split(':')[0])
-
-    let results = Array(7);
-    //7 days
-    for(let i = 0; i < 7; i++){
-        let daily_results = Array(); 
-        //24 hours
-        while(true){
-            const usage_query = {
-                parking_lot_id : parking_lot_id,
-                end_time : { $gt : time } ,
-                start_time : { $lt : time } ,
-            }
-            let n_cars = await usage_coll.countDocuments(usage_query);
-            daily_results.push({ hour : hour, usage_rate : n_cars / parking_lot.space_is_available.length});
-
-            date_str = DateTime.fromMillis(time).setZone('Asia/Taipei').toISO().split('T')[0]
-            time -= 1000 * 3600;
-            if(hour == 0){
-                hour = 23;
-                results[i] = { date : date_str, daily_results };
-                break;
-            }
-            hour--;
+    results = Array();
+    while(time >= start_time){
+        const usage_query = {
+            parking_lot_id : parking_lot_id,
+            end_time : { $gt : time } ,
+            start_time : { $lt : time } ,
         }
+        let n_cars = await usage_coll.countDocuments(usage_query);
+        results.push({ hour : hour, usage_rate : n_cars / parking_lot.space_is_available.length});
+        time -= 1000 * 3600;
+        hour--;
     }
     return results;
 }
@@ -360,10 +348,11 @@ app.post('/space_info', async(req, res) => {
     res.send(result);
 })
 
-app.get('/usage_rate', async(req, res) => {
+app.post('/usage_rate', async(req, res) => {
     const parking_lot_id = 0;
-    const result = await usage_rate(parking_lot_id);
-    console.log('GET/usage_rate');
+    const date = req.body.date;
+    const result = await usage_rate(parking_lot_id, date);
+    console.log('POST/usage_rate');
     res.send(result);
 })
 

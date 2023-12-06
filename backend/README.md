@@ -38,7 +38,7 @@ curl -H "Content-Type: application/json" -H "authorization: Bearer ${token}" -X 
 
 usage_rate
 ```sh
-curl -H "authorization: Bearer ${token}" localhost:3000/usage_rate
+curl -H "Content-Type: application/json" -H "authorization: Bearer ${token}" -X POST -d '{"date": "YYYY-MM-DD"}' localhost:3000/usage_rate
 ```
 
 login
