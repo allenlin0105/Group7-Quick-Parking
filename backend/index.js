@@ -10,6 +10,8 @@ app.use(express.urlencoded({ extended: true }));
 const { DateTime } = require("luxon");
 const config = require("./config.json");
 const sha256 = require('js-sha256');
+const {expressjwt: expressjwt} = require('express-jwt')
+const jwt = require('jsonwebtoken')
 
 // Load environment variable
 require('dotenv').config()
@@ -251,7 +253,40 @@ async function login(id, passwd){
 
 
 //-----------------------------------------------------------------------------------
+app.use(
+    expressjwt({ secret: config.jwt_secret, algorithms: ["HS256"] }).unless({
+      path: ['/available_space', '/parking_lot_size', '/park', '/leave', '/find_car', '/login'],
+    })
+)
 
+app.use(function (err, req, res, next) {
+    if (err.name === 'UnauthorizedError') {   
+      res.status(401).send('invalid token')
+    }
+})
+  
+app.post("/login", async (req, res) => {
+    const id = req.body.id;
+    const passwd = req.body.passwd;
+    const result = await login(id, passwd);
+    console.log('POST /login\n');
+
+    if (!result) {
+        return res.send({
+            status: 400,
+            message: "Failed",
+        });
+    }
+    
+    const tokenStr = jwt.sign({ username: id }, config.jwt_secret, {
+        expiresIn: "30m",
+    });
+    res.send({
+        status: 200,
+        message: "Success",
+        token: tokenStr,
+    });
+});
 
 app.get('/available_space', async (req, res) => {
     const parking_lot_id = 0;
@@ -296,7 +331,7 @@ app.post('/leave', async (req, res) =>{
 	}
 })
 
-app.get('/find_car', async (req, res) => { 
+app.post('/find_car', async (req, res) => { 
     const parking_lot_id = 0;
     const plate = req.body.plate;
     console.log('POST /find_car');
@@ -309,13 +344,13 @@ app.get('/find_car', async (req, res) => {
 	}
 })
 
-app.get('/space_info', async(req, res) => {
+app.post('/space_info', async(req, res) => {
     const parking_lot_id = 0;
     const space_id = req.body.space_id;
     const start_date = req.body.start_date;
     const end_date = req.body.end_date;
     const result = await space_info(parking_lot_id, space_id, start_date, end_date);
-    console.log('GET/space_info');
+    console.log('POST/space_info');
 
     for(let i = 0; i < result.usage_list.length; i++){
         result.usage_list[i].start_time = DateTime.fromMillis(result.usage_list[i].start_time).setZone('Asia/Taipei').toISO();
@@ -330,13 +365,6 @@ app.get('/usage_rate', async(req, res) => {
     const result = await usage_rate(parking_lot_id);
     console.log('GET/usage_rate');
     res.send(result);
-})
-
-app.post('/login', async(req, res) => {
-    const id = req.body.id;
-    const passwd = req.body.passwd;
-    const result = await login(id, passwd);
-    res.send({result});
 })
 
 app.listen(port, async () => {

@@ -28,17 +28,17 @@ curl -H "Content-Type: application/json" -X POST -d '{"space_id":xxx}' localhost
 
 find_car
 ```sh
-curl -H "Content-Type: application/json" -X GET -d '{"plate":"xxx"}' localhost:3000/find_car
+curl -H "Content-Type: application/json" -X POST -d '{"plate":"xxx"}' localhost:3000/find_car
 ```
 
 space_info
 ```sh
-curl -H "Content-Type: application/json" -X GET -d '{"space_id":xxx, "start_date":"YYYY-MM-DD", "end_date":"YYYY-MM-DD"}' localhost:3000/space_info
+curl -H "Content-Type: application/json" -H "authorization: Bearer ${token}" -X POST -d '{"space_id":xxx, "start_date":"YYYY-MM-DD", "end_date":"YYYY-MM-DD"}' localhost:3000/space_info
 ```
 
 usage_rate
 ```sh
-curl localhost:3000/usage_rate
+curl -H "authorization: Bearer ${token}" localhost:3000/usage_rate
 ```
 
 login
