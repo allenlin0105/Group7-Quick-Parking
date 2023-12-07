@@ -1,5 +1,8 @@
 import React from "react"
+import Plan from "../../components/Plan"
 
 export default function Home() {
-    return <h1>todo: write the plan component and import here</h1>
+    return (<>
+        <Plan editable={false}/>
+    </>);
 };
