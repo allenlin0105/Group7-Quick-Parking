@@ -27,9 +27,9 @@ export default function Plan(props) {
             ctx.drawImage(planImage, 0, 0);
             if (isEditable) {
                 plan.forEach((slot, index) => {
-                    const slotImage = new Image();
-                    slotImage.src = 'images/car.png';
-                    slotImage.onload = () => {
+                    const carImage = new Image();
+                    carImage.src = 'images/car.png';
+                    carImage.onload = () => {
                         ctx.save();
                         ctx.translate(slot.x, slot.y);
                         ctx.rotate(slot.r * Math.PI / 180);
@@ -42,7 +42,7 @@ export default function Plan(props) {
                             ctx.shadowColor = 'red';
                             ctx.shadowBlur = 20;
                         }
-                        ctx.drawImage(slotImage, -slot.w / 2, -slot.h / 2, slot.w, slot.h);
+                        ctx.drawImage(carImage, -slot.w / 2, -slot.h / 2, slot.w, slot.h);
                         ctx.restore();
                     };
                 });
@@ -51,10 +51,10 @@ export default function Plan(props) {
                     console.log(slot)
                     // Check if the slot is occupied
                     if (slot.occupied) {
-                        // Draw a slot image if occupied
-                        const slotImage = new Image();
-                        slotImage.src = 'images/car.png'; // Path to slot image
-                        slotImage.onload = () => {
+                        // Draw a car image if slot is occupied
+                        const carImage = new Image();
+                        carImage.src = 'images/car.png';
+                        carImage.onload = () => {
                             ctx.save();
                             ctx.translate(slot.x, slot.y);
                             ctx.rotate(slot.r * Math.PI / 180);
@@ -62,7 +62,7 @@ export default function Plan(props) {
                                 ctx.fillStyle = '#857C7C';  // Light background color for unoccupied
                                 ctx.fillRect(-slot.w / 2,-slot.h / 2, slot.w, slot.h);
                             }
-                            ctx.drawImage(slotImage, -slot.w / 2, -slot.h / 2, slot.w, slot.h);
+                            ctx.drawImage(carImage, -slot.w / 2, -slot.h / 2, slot.w, slot.h);
                             if (guard) {
                                 ctx.font="bold 20px Inter";
                                 ctx.fillStyle = 'white'; // Text color
