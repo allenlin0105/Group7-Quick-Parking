@@ -144,7 +144,7 @@ export default function Plan(props) {
                 return;
             console.log(slot.id);
             // todo: maybe navigate to history
-            // navigate('/guard/history', { state: { slotId: slot.id } })
+            navigate('/guard/history', { state: { spaceId: slot.id } })
         } else {
             const slot = plan.find(slot => {
                 return isMouseOverslot(x, y, slot);
