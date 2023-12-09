@@ -9,6 +9,7 @@ import GuardNav from "./pages/guard/Nav"
 import GuardHome from "./pages/guard/Home"
 import GuardHistory from "./pages/guard/History"
 import GuardMap from "./pages/guard/Map"
+import GuardParking from "./pages/guard/Parking"
 
 export default function App() {
   // define all the Route(s)s here, nested "Routes"s lead to conflict error.
@@ -32,3 +33,4 @@ export default function App() {
     </>
   );
 };
+

@@ -1,0 +1,99 @@
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* 調整至適當高度 */
+  } 
+
+  .custom-h1 {
+    font-size: 3.5em; /* 修改字型大小 */
+    margin-bottom: 10px; /* 調整下邊距 */
+  }
+  
+  .custom-h2 {
+    font-size: 1.8em; /* 修改字型大小 */
+    margin-bottom: 20px; /* 調整下邊距 */
+    padding-left: 100px; /* 左側間距 */
+    padding-right: 100px; /* 右側間距*/
+  }
+  
+  .identity_button {
+    font-size: 1.8em; /* 字體大小 */
+    font-weight: bold; /* 將字體設為粗體 */
+    width: auto; /* 按鈕寬度根據內容自動調整 */
+    height: auto; /* 按鈕高度根據內容自動調整 */
+    padding: 3px 60px; /* 調整按鈕內容與邊框的間距 */
+    margin-top: 10px; /* 調整按鈕與上方元素的距離 */
+    margin-bottom: 7px; /* 調整按鈕與下方元素的距離 */
+    border-width: 2.5px; /* 邊框寬度 */
+    border-radius: 10px; /* 邊框圓角 */
+    cursor: pointer; /* 將按鈕上的游標設置為指示點擊的樣式 */
+  }
+
+  .home-container {
+    position: relative;
+  }
+
+  .login-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 0.3em;
+    background: white;
+    padding: 20px;
+    border: 2px solid #646060;
+    z-index: 1; /* 設置堆疊順序，確保在上層 */
+  }
+ 
+  .login-form label {
+    display: inline-block;
+    font-size: 1em;
+    margin-right: 0.2em; /* 加入文字標籤與輸入框的間距 */
+    margin-top: 0.3em; /* 調整上邊距 */
+    margin-bottom: 0.3em; /* 調整下邊距 */
+  }
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  padding: 0.2em;
+  border: 1px solid #ccc; /* 調整輸入框邊框寬度和顏色 */
+  border-radius: 3px; /* 調整輸入框圓角 */
+}
+
+.login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(211, 209, 209, 0.762); /* 半透明的灰色背景 */
+  z-index: 0; /* 設置遮罩的堆疊順序，比登入框更低 */
+}
+
+.login-h1 {
+    font-size: 1.8em; /* 修改字型大小 */
+    margin-top: 0.01em; /* 調整上邊距 */
+    margin-bottom: 0.2em; /* 調整下邊距 */
+}
+
+.login-form button {
+  padding: 0.2em 0.5em;
+  font-weight: bold; /* 調整按鈕字體粗細 */
+  border: 1px solid black; /* 調整按鈕邊框寬度和顏色 */
+  border-radius: 5px; /* 調整按鈕圓角 */
+  margin-top: 0.7em; 
+  margin-bottom: 0.1em;
+  margin-left: 0.5em;
+  margin-right: 0.2em;
+  cursor: pointer;
+  float: right; /* 讓按鈕浮動到右側 */
+  margin-left: 0.5em; /* 加入左側間距 */
+}
+
+.login-buttons::after {
+  content: '';
+  display: table;
+  clear: both; /* 清除浮動，確保元素不會受到按鈕的影響 */
+}

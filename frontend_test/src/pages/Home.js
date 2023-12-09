@@ -1,28 +1,42 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import "./Home.css"
+import Login from './Login';
 
 export default function Home() {
-    // todo: a pop up login here.
-    return (
+  const [showLogin, setShowLogin] = useState(false);
+
+  const handleLoginClose = () => {
+    setShowLogin(false);
+  };
+
+  const handleLogin = () => {
+    setShowLogin(true);
+  };
+  const navigate = useNavigate();
+  const handleSuccessfulLogin = () => {
+    // 登入成功後的處理
+    // 可以導航到GuardHome
+    navigate('/guard');
+  };
+
+  return (
+    <div className='home-container'>
+      {showLogin && <Login onClose={handleLoginClose} onLogin={handleSuccessfulLogin} />}
       <div className='center'>
-        <h1>Quick Parking</h1>
-        <h2>你的身份是...</h2>
+        <h1 className='custom-h1'>Quick Parking</h1>
+        <h2 className='custom-h2'>你的身份是 ...</h2>
         <nav>
           <div>
-          <Link to="/carowner">
-            <button type="button">
-            車主
-            </button>
-          </Link>
+            <Link to="/carowner">
+              <button className="identity_button">車 主</button>
+            </Link>
           </div>
           <div>
-          <Link to="/guard">
-            <button type="button">
-              警衛
-            </button>
-          </Link>
+            <button className="identity_button" onClick={handleLogin}>警 衛</button>
           </div>
         </nav>
       </div>
-    );
+    </div>
+  );
 };
