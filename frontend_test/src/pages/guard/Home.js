@@ -1,5 +1,6 @@
 import React from "react";
 import History from "./History"
+import Plan from "../../components/Plan";
 
 export default function Home() {
     return (
@@ -7,7 +8,8 @@ export default function Home() {
             {/* <h1>
                 todo: 加上警衛主頁
             </h1> */}
-            <History spaceId={4}/>
+            <Plan guard={true}/>
+            {/* <History spaceId={4}/> */}
         </>
     )
 }

@@ -3,6 +3,6 @@ import Plan from "../../components/Plan"
 
 export default function Home() {
     return (<>
-        <Plan editable={false} guard={false}/>
+        <Plan guard={false}/>
     </>);
 };

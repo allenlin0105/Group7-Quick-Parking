@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Plan.css';
 import planData from './Plan.json'; // Path to your JSON file
+import { useNavigate } from 'react-router-dom';
+import PlanDialog from './PlanDialog';
 
 export default function Plan(props) {
     const { editable = false, guard = false } = props;
@@ -8,9 +10,12 @@ export default function Plan(props) {
     const [plan, setPlan] = useState(initPlan);
     const [selectedslotIndex, setSelectedslotIndex] = useState(null);
     const [hoverslotIndex, setHoverslotIndex] = useState(null);
+    const [clickedslotIndex, setCLickedslotIndex] = useState(null);
     const [mouse, setMouse] = useState({ x: 0, y: 0 });
     const [isEditable, setIsEditable] = useState(editable); // New state for edit mode
     const canvasRef = useRef(null);
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(false); // https://mui.com/material-ui/react-dialog/#form-dialogs
 
     useEffect(() => {
         drawCanvas();
@@ -22,6 +27,8 @@ export default function Plan(props) {
         const planImage = new Image();
         planImage.src = 'images/plan.png';
         planImage.onload = () => {
+            canvas.style.minWidth = `${planImage.naturalWidth}px`;
+            canvas.style.minHeight = `${planImage.naturalHeight}px`;
             canvas.width = planImage.width;
             canvas.height = planImage.height;
             ctx.drawImage(planImage, 0, 0);
@@ -48,7 +55,7 @@ export default function Plan(props) {
                 });
             } else {
                 plan.forEach(slot=> {
-                    console.log(slot)
+                    // console.log(slot)
                     // Check if the slot is occupied
                     if (slot.occupied) {
                         // Draw a car image if slot is occupied
@@ -92,49 +99,87 @@ export default function Plan(props) {
     };
 
     const isMouseOverslot = (x, y, slot) => {
-        return x > slot.x - slot.w / 2 &&
-               x < slot.x + slot.w / 2 &&
-               y > slot.y - slot.h / 2 &&
-               y < slot.y + slot.h / 2;
+        // Translate mouse coordinates to the slot's coordinate system
+        const translatedX = x - slot.x;
+        const translatedY = y - slot.y;
+    
+        // Rotate mouse coordinates in the reverse direction of the slot's rotation
+        const rotatedX = translatedX * Math.cos(-slot.r * Math.PI / 180) - translatedY * Math.sin(-slot.r * Math.PI / 180);
+        const rotatedY = translatedX * Math.sin(-slot.r * Math.PI / 180) + translatedY * Math.cos(-slot.r * Math.PI / 180);
+    
+        // Check if the rotated mouse coordinates are within the slot's width and height
+        return rotatedX > -slot.w / 2 && rotatedX < slot.w / 2 &&
+               rotatedY > -slot.h / 2 && rotatedY < slot.h / 2;
     }
 
     const handleCanvasClick = (event) => {
-        if (!isEditable)
-            return;
         const rect = canvasRef.current.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        const clickedslotIndex = plan.findIndex(slot => {
-            return isMouseOverslot(x, y, slot);
-        });
-
-        if (clickedslotIndex !== -1) {
-            setSelectedslotIndex(clickedslotIndex);
+        if (isEditable) {    
+            const clickedslotIndex = plan.findIndex(slot => {
+                return isMouseOverslot(x, y, slot);
+            });
+    
+            if (clickedslotIndex !== -1) {
+                setSelectedslotIndex(clickedslotIndex);
+            } else {
+                const newslot = { 
+                    id: plan.length + 1, 
+                    x: mouse.x, 
+                    y: mouse.y, 
+                    w: 50, h: 110, 
+                    r: 0, occupied: true
+                };
+                setPlan([...plan, newslot]);
+                setSelectedslotIndex(plan.length);
+                setHoverslotIndex(plan.length);
+            }
+        } else if (guard) {
+            const slot = plan.find(slot => {
+                return isMouseOverslot(x, y, slot);
+            });
+            if (slot === undefined)
+                return;
+            console.log(slot.id);
+            // todo: maybe navigate to history
+            // navigate('/guard/history', { state: { slotId: slot.id } })
         } else {
-            const newslot = { 
-                id: plan.length + 1, 
-                x: mouse.x, 
-                y: mouse.y, 
-                w: 50, h: 110, 
-                r: 0, occupied: true
-            };
-            setPlan([...plan, newslot]);
-            setSelectedslotIndex(plan.length);
-            setHoverslotIndex(plan.length);
+            const slot = plan.find(slot => {
+                return isMouseOverslot(x, y, slot);
+            });
+            if (slot === undefined)
+                return;
+            if (!slot.occupied) {
+                setSelectedslotIndex(slot.id);
+                handleClickOpen();
+            }
         }
     };
 
     const handleMouseMove = (event) => {
-        if (!isEditable)
-            return;
+        const canvas = canvasRef.current;
         const rect = canvasRef.current.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-        setMouse({ x: mouseX, y: mouseY });
-
-        const hoverIndex = plan.findIndex(slot => isMouseOverslot(mouseX, mouseY, slot));
-        setHoverslotIndex(hoverIndex !== -1 ? hoverIndex : null);
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        
+        if (isEditable) {
+            setMouse({ x: x, y: y });
+            const hoverIndex = plan.findIndex(slot => isMouseOverslot(x, y, slot));
+            setHoverslotIndex(hoverIndex !== -1 ? hoverIndex : null);
+        }
+        const slot = plan.find(slot => {
+            return isMouseOverslot(x, y, slot);
+        });
+        if (slot === undefined) {
+            canvas.style.cursor = 'default';
+        }
+        else if (editable || guard) {
+            canvas.style.cursor = 'pointer';
+        } else if (guard === false && !slot.occupied) {
+            canvas.style.cursor = 'pointer';
+        }
     };
 
     const updateslotProperty = (index, property, value) => {
@@ -174,9 +219,23 @@ export default function Plan(props) {
             setPlan(newData);
         }
     };
+    const handleClickOpen = () => {
+        setOpen(true);
+      };
+    
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <div className="centered-div" style={{ textAlign: 'center' }}>
+            <PlanDialog 
+                open={open} 
+                onClose={handleClose}
+                slotId={selectedslotIndex}
+                contentText="To subscribe to this website, please enter your email address here. We will send updates occasionally."
+                textFieldLabel="Email Address"
+            />
             <canvas
                 ref={canvasRef}
                 onMouseMove={handleMouseMove}
