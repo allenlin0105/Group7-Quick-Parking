@@ -1,0 +1,84 @@
+.home-container {
+    padding-left: 1em; /* 左側邊距 */
+    padding-right: 1em; /* 左側邊距 */
+  }
+ 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 2.3em;
+    font-weight: bold;
+    margin-left: 0.3em;
+    align-items: baseline;
+  }
+
+p1 {
+    display: flex;
+    margin-left: auto;
+    font-size: 1.3em;
+    margin-right: 0.8em;
+    align-items: baseline;
+}
+
+.availnum {
+    font-size: 2.1em;
+    font-weight: 900; /* 使用較粗的字體，可以根據需要調整數值 */
+    color: blue;
+    align-items: baseline;
+  }
+
+.posi_num {
+    color: red;
+}
+
+.info {
+    margin-left: 0.8em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.selection-container {
+    position: fixed;
+    width: 15em;
+    height: 10em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 0.3em;
+    background: white;
+    padding: 20px;
+    border: 2px solid #646060;
+    text-align: center;
+    z-index: 1; /* 設置堆疊順序，確保在上層 */
+}
+
+.selection-h1 {
+    font-size: 1.8em; /* 修改字型大小 */
+    margin-top: 0em; /* 調整上邊距 */
+    margin-bottom: 0.5em; /* 調整下邊距 */
+}
+
+.selection-container button {
+    font-size: 1.5em;
+    padding: 0.2em 0.5em;
+    font-weight: bold; /* 調整按鈕字體粗細 */
+    border: 1px solid black; /* 調整按鈕邊框寬度和顏色 */
+    border-radius: 5px; /* 調整按鈕圓角 */
+    margin-bottom: 0.5em;
+    cursor: pointer;
+    margin-left: 0.5em; /* 加入左側間距 */
+}
+
+.selection-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(211, 209, 209, 0.762); /* 半透明的灰色背景 */
+    z-index: 0; /* 設置遮罩的堆疊順序，比登入框更低 */
+}
