@@ -43,8 +43,7 @@ export default function Home() {
                     <p1>目前空位： <span className="availnum">{availableSlots}</span> &nbsp;/ 46</p1>
                 </div>
             </div>           
-            {/* 地圖 */}
-            <Plan guard={false}/>
+            <Plan />
         </div>
     )
 };
