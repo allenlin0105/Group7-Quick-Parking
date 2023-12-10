@@ -1,0 +1,12 @@
+{
+    "n_parking_lots": 1,
+    "parking_lot_size": [10],
+    "jwt_secret": "guardsecret",
+    "guards": [
+        {
+            "id": "group7",
+            "passwd": "1234"
+        }
+    ],
+    "reset": false
+}
