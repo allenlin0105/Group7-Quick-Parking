@@ -3,14 +3,15 @@ import './Plan.css';
 import planData from './Plan.json'; // Path to your JSON file
 import { useNavigate } from 'react-router-dom';
 import PlanDialog from './PlanDialog';
+import carownerService from '../services/spaceService'
 
 export default function Plan(props) {
-    const { editable = false, guard = false } = props;
+    const { editable = false, guard = false, locatedSpaceId = null} = props;
     const initPlan = editable ? [] : planData;
     const [plan, setPlan] = useState(initPlan);
-    const [selectedslotIndex, setSelectedslotIndex] = useState(null);
-    const [hoverslotIndex, setHoverslotIndex] = useState(null);
-    const [clickedslotIndex, setCLickedslotIndex] = useState(null);
+    const [selectedSpacdId, setSelectedSpacdId] = useState(null);
+    const [hoverSpacdId, setHoverSpacdId] = useState(null);
+    const [clickedSpacdId, setCLickedSpacdId] = useState(null);
     const [mouse, setMouse] = useState({ x: 0, y: 0 });
     const [isEditable, setIsEditable] = useState(editable); // New state for edit mode
     const canvasRef = useRef(null);
@@ -18,8 +19,32 @@ export default function Plan(props) {
     const [open, setOpen] = useState(false); // https://mui.com/material-ui/react-dialog/#form-dialogs
 
     useEffect(() => {
+        const handleGetAvailableSpace = async () => {
+            try {
+                // async and await is needed here.
+                const availSpaces = await carownerService.getAvailableSpace();
+                console.log(availSpaces);
+                const updatedPlan = plan.map(space => {
+                    if (availSpaces.space_list.includes(space.id)) {
+                        return { ...space, occupied: false };
+                    }
+                    return { ...space, occupied: true };
+                    });
+                console.log(updatedPlan);
+                setPlan(updatedPlan);
+            } catch (e) {
+                console.error("Error:", e);
+            }
+        }
+        if (editable === false)
+            handleGetAvailableSpace();
+    }, [open])
+
+    useEffect(() => {
         drawCanvas();
-    }, [plan, mouse, hoverslotIndex, selectedslotIndex, isEditable]);
+    }, [plan, mouse, hoverSpacdId, selectedSpacdId, isEditable]);
+
+
 
     const drawCanvas = () => {
         const canvas = canvasRef.current;
@@ -41,11 +66,11 @@ export default function Plan(props) {
                         ctx.translate(slot.x, slot.y);
                         ctx.rotate(slot.r * Math.PI / 180);
                         
-                        if (index === hoverslotIndex) {
+                        if (index === hoverSpacdId) {
                             ctx.shadowColor = 'blue';
                             ctx.shadowBlur = 20;
                         }
-                        if (index === selectedslotIndex) {
+                        if (index === selectedSpacdId) {
                             ctx.shadowColor = 'red';
                             ctx.shadowBlur = 20;
                         }
@@ -118,12 +143,12 @@ export default function Plan(props) {
         const y = event.clientY - rect.top;
 
         if (isEditable) {    
-            const clickedslotIndex = plan.findIndex(slot => {
+            const clickedSpacdId = plan.findIndex(slot => {
                 return isMouseOverslot(x, y, slot);
             });
     
-            if (clickedslotIndex !== -1) {
-                setSelectedslotIndex(clickedslotIndex);
+            if (clickedSpacdId !== -1) {
+                setSelectedSpacdId(clickedSpacdId);
             } else {
                 const newslot = { 
                     id: plan.length + 1, 
@@ -133,8 +158,8 @@ export default function Plan(props) {
                     r: 0, occupied: true
                 };
                 setPlan([...plan, newslot]);
-                setSelectedslotIndex(plan.length);
-                setHoverslotIndex(plan.length);
+                setSelectedSpacdId(plan.length);
+                setHoverSpacdId(plan.length);
             }
         } else if (guard) {
             const slot = plan.find(slot => {
@@ -142,9 +167,7 @@ export default function Plan(props) {
             });
             if (slot === undefined)
                 return;
-            console.log(slot.id);
-            // todo: maybe navigate to history
-            // navigate('/guard/history', { state: { slotId: slot.id } })
+            navigate('/guard/history', { state: { slotId: slot.id } })
         } else {
             const slot = plan.find(slot => {
                 return isMouseOverslot(x, y, slot);
@@ -152,7 +175,7 @@ export default function Plan(props) {
             if (slot === undefined)
                 return;
             if (!slot.occupied) {
-                setSelectedslotIndex(slot.id);
+                setCLickedSpacdId(slot.id);
                 handleClickOpen();
             }
         }
@@ -167,12 +190,13 @@ export default function Plan(props) {
         if (isEditable) {
             setMouse({ x: x, y: y });
             const hoverIndex = plan.findIndex(slot => isMouseOverslot(x, y, slot));
-            setHoverslotIndex(hoverIndex !== -1 ? hoverIndex : null);
+            setHoverSpacdId(hoverIndex !== -1 ? hoverIndex : null);
         }
         const slot = plan.find(slot => {
             return isMouseOverslot(x, y, slot);
         });
-        if (slot === undefined) {
+        if (slot === undefined ||
+            (guard === false && locatedSpaceId !== null) ) {
             canvas.style.cursor = 'default';
         }
         else if (editable || guard) {
@@ -189,10 +213,10 @@ export default function Plan(props) {
     };
 
     const deleteslot = () => {
-        if (selectedslotIndex !== null) {
-            const newData = plan.filter((_, index) => index !== selectedslotIndex);
+        if (selectedSpacdId !== null) {
+            const newData = plan.filter((_, index) => index !== selectedSpacdId);
             setPlan(newData);
-            setSelectedslotIndex(null);
+            setSelectedSpacdId(null);
         }
     };
 
@@ -213,9 +237,9 @@ export default function Plan(props) {
     };
 
     const toggleslotOccupied = () => {
-        if (selectedslotIndex !== null) {
+        if (selectedSpacdId !== null) {
             const newData = [...plan];
-            newData[selectedslotIndex].occupied = !newData[selectedslotIndex].occupied;
+            newData[selectedSpacdId].occupied = !newData[selectedSpacdId].occupied;
             setPlan(newData);
         }
     };
@@ -232,7 +256,7 @@ export default function Plan(props) {
             <PlanDialog 
                 open={open} 
                 onClose={handleClose}
-                slotId={selectedslotIndex}
+                slotId={clickedSpacdId}
                 contentText="To subscribe to this website, please enter your email address here. We will send updates occasionally."
                 textFieldLabel="Email Address"
             />
@@ -243,23 +267,23 @@ export default function Plan(props) {
                 style={{ maxWidth: '100%' }}
             ></canvas>
             {(isEditable) && (<div>Mouse Coordinates: X: {mouse.x}, Y: {mouse.y}</div>)}
-            {(isEditable && selectedslotIndex !== null) && (
+            {(isEditable && selectedSpacdId !== null) && (
                 <div className="control-panel">
                 <div className="input-row">
                     <label>
                         X Position:
                         <input
                             type="number"
-                            value={plan[selectedslotIndex].x}
-                            onChange={(e) => updateslotProperty(selectedslotIndex, 'x', e.target.value)}
+                            value={plan[selectedSpacdId].x}
+                            onChange={(e) => updateslotProperty(selectedSpacdId, 'x', e.target.value)}
                         />
                     </label>
                     <label>
                         Y Position:
                         <input
                             type="number"
-                            value={plan[selectedslotIndex].y}
-                            onChange={(e) => updateslotProperty(selectedslotIndex, 'y', e.target.value)}
+                            value={plan[selectedSpacdId].y}
+                            onChange={(e) => updateslotProperty(selectedSpacdId, 'y', e.target.value)}
                         />
                     </label>
                 </div>
@@ -268,16 +292,16 @@ export default function Plan(props) {
                         Width:
                         <input
                             type="number"
-                            value={plan[selectedslotIndex].w}
-                            onChange={(e) => updateslotProperty(selectedslotIndex, 'w', e.target.value)}
+                            value={plan[selectedSpacdId].w}
+                            onChange={(e) => updateslotProperty(selectedSpacdId, 'w', e.target.value)}
                         />
                     </label>
                     <label>
                         Height:
                         <input
                             type="number"
-                            value={plan[selectedslotIndex].h}
-                            onChange={(e) => updateslotProperty(selectedslotIndex, 'h', e.target.value)}
+                            value={plan[selectedSpacdId].h}
+                            onChange={(e) => updateslotProperty(selectedSpacdId, 'h', e.target.value)}
                         />
                     </label>
                 </div>
@@ -286,8 +310,8 @@ export default function Plan(props) {
                         Rotation:
                         <input
                             type="number"
-                            value={plan[selectedslotIndex].r}
-                            onChange={(e) => updateslotProperty(selectedslotIndex, 'r', e.target.value)}
+                            value={plan[selectedSpacdId].r}
+                            onChange={(e) => updateslotProperty(selectedSpacdId, 'r', e.target.value)}
                         />
                     </label>
                     <button onClick={toggleslotOccupied}>

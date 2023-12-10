@@ -7,15 +7,25 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import './PlanDialog.css';
+import spaceService from '../services/spaceService';
 
 export default function PlanDialog(props) {
   const { open, onClose, slotId, textFieldLabel } = props;
   const [carPlate, setCarPlate] = useState('');
   const [currentTime, setCurrentTime] = useState('');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // todo: backend here.
-    console.log(carPlate);
+    // console.log(carPlate);
+    try {
+        const data = await spaceService.postPark(
+            carPlate,
+            slotId,
+        )
+        console.log("Park", carPlate, "at", slotId);
+    } catch (error) {
+        console.error(error)
+    }
     onClose();
   };
 

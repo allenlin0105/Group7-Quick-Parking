@@ -6,7 +6,7 @@
       "w": 50,
       "h": 110,
       "r": 0,
-      "occupied": true
+      "occupied": false
     },
     {
       "id": 2,
@@ -15,7 +15,7 @@
       "w": 50,
       "h": 110,
       "r": 0,
-      "occupied": true
+      "occupied": false
     },
     {
       "id": 3,
@@ -24,7 +24,7 @@
       "w": 50,
       "h": 110,
       "r": 0,
-      "occupied": true
+      "occupied": false
     },
     {
       "id": 4,
@@ -42,7 +42,7 @@
       "w": 50,
       "h": 110,
       "r": 0,
-      "occupied": true
+      "occupied": false
     },
     {
       "id": 6,
@@ -51,7 +51,7 @@
       "w": 50,
       "h": 110,
       "r": 90,
-      "occupied": true
+      "occupied": false
     },
     {
       "id": 7,
@@ -204,7 +204,7 @@
       "w": 50,
       "h": 110,
       "r": 270,
-      "occupied": true
+      "occupied": false
     },
     {
       "id": 24,
