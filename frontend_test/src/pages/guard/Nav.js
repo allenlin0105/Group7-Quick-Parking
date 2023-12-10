@@ -1,5 +1,5 @@
 import React from 'react'
-import NavBar from '../../components/NavBar'
+import NavBar from '../../components/NavBar.js'
 import { Outlet, useLocation } from 'react-router-dom';
 
 export default function Nav() {

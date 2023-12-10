@@ -1,0 +1,43 @@
+.home-container {
+    
+    padding-left: 1em; /* 左側邊距 */
+    padding-right: 1em; /* 左側邊距 */
+  }
+ 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 2.3em;
+    font-weight: bold;
+    margin-left: 0.3em;
+    align-items: baseline;
+  }
+
+p1 {
+    display: flex;
+    margin-left: auto;
+    font-size: 1.3em;
+    margin-right: 0.8em;
+    align-items: baseline;
+}
+
+.availnum {
+    font-size: 2.1em;
+    font-weight: 900; /* 使用較粗的字體，可以根據需要調整數值 */
+    color: blue;
+    align-items: baseline;
+  }
+
+.posi_num {
+    color: red;
+}
+
+.info {
+    margin-left: 0.8em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
