@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 3000;
+const port = 8000;
 
 app.use(cors());
 app.use(express.json());
@@ -199,7 +199,7 @@ async function space_info(parking_lot_id, space_id, start_day, end_day){
                 usage_list.shift();
         }
         date_str = DateTime.fromMillis(day_start).setZone('Asia/Taipei').toISO().split('T')[0]
-        utilities.push({date : date_str, utility : time_sum / day_delta});
+        utilities.push({date : date_str, utility : Math.round(time_sum / day_delta * 100)});
         day_start = day_end;
         day_end = Math.min(day_end + day_delta, end_time);
     }
@@ -224,7 +224,7 @@ async function usage_rate(parking_lot_id, date){
             start_time : { $lt : time } ,
         }
         let n_cars = await usage_coll.countDocuments(usage_query);
-        results.push({ hour : hour, usage_rate : n_cars / parking_lot.space_is_available.length});
+        results.push({ hour : hour, usage_rate : Math.round((n_cars / parking_lot.space_is_available.length) * 100)});
         time -= 1000 * 3600;
         hour--;
     }
@@ -280,7 +280,8 @@ app.get('/available_space', async (req, res) => {
     const parking_lot_id = 0;
     console.log('GET /available_space\n');
     const {space_count, space_list} = await get_available_space(parking_lot_id);
-    res.send({n_available_space: space_count, space_list: space_list});
+    const total_space = await get_total_space(parking_lot_id);
+    res.send({total_space: total_space, n_available_space: space_count, space_list: space_list});
 })
 
 app.get('/parking_lot_size', async (req, res) => {
@@ -358,7 +359,7 @@ app.post('/usage_rate', async(req, res) => {
 
 app.listen(port, async () => {
 	if(config.reset){
-        await database.dropDatabase();
+        // await database.dropDatabase();
         await setup();
     }
     console.log("Server is listening on port " + port + '\n');
