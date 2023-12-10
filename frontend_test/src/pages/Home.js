@@ -21,21 +21,26 @@ export default function Home() {
   };
 
   return (
-    <div className='home-container'>
+    <div className='home-container home-gradient'>
       {showLogin && <Login onClose={handleLoginClose} onLogin={handleSuccessfulLogin} />}
       <div className='center'>
         <h1 className='custom-h1'>Quick Parking</h1>
-        <h2 className='custom-h2'>你的身份是 ...</h2>
-        <nav>
-          <div>
-            <Link to="/carowner">
-              <button className="identity_button">車 主</button>
-            </Link>
-          </div>
-          <div>
-            <button className="identity_button" onClick={handleLogin}>警 衛</button>
-          </div>
-        </nav>
+        <div className="image-container">
+          <img src="images/home_graphic.png" alt="Home" />
+        </div>
+        <div className="button-group">
+          <h2 className='custom-h2'>你的身份是 ...</h2>
+          <nav>
+            <div>
+              <Link to="/carowner">
+                <button className="identity_button">車 主</button>
+              </Link>
+            </div>
+            <div>
+              <button className="identity_button" onClick={handleLogin}>警 衛</button>
+            </div>
+          </nav>
+        </div>
       </div>
     </div>
   );

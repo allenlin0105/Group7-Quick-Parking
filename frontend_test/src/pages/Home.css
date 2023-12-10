@@ -3,7 +3,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh; /* 調整至適當高度 */
+    /* height: 100vh;  */
+    /* 調整至適當高度 */
   } 
 
   .custom-h1 {
@@ -33,6 +34,14 @@
 
   .home-container {
     position: relative;
+    height: 100vh;
+  }
+
+  .home-gradient {
+    background: rgb(143,140,186);
+    background: -moz-linear-gradient(180deg, rgba(143,140,186,1) 0%, rgba(223,223,231,1) 35%, rgba(242,242,242,1) 100%);
+    background: -webkit-linear-gradient(180deg, rgba(143,140,186,1) 0%, rgba(223,223,231,1) 35%, rgba(242,242,242,1) 100%);
+    background: linear-gradient(180deg, rgba(143,140,186,1) 0%, rgba(223,223,231,1) 35%, rgba(242,242,242,1) 100%);
   }
 
   .login-container {
@@ -96,4 +105,51 @@
   content: '';
   display: table;
   clear: both; /* 清除浮動，確保元素不會受到按鈕的影響 */
+}
+
+img {
+  width: 100%;
+  max-width: 768px;
+}
+
+@media (min-width: 768px) {
+  .home-gradient {
+    background: rgb(143,140,186);
+    background: -moz-linear-gradient(90deg, rgba(143,140,186,1) 0%, rgba(223,223,231,1) 35%, rgba(242,242,242,1) 100%);
+    background: -webkit-linear-gradient(90deg, rgba(143,140,186,1) 0%, rgba(223,223,231,1) 35%, rgba(242,242,242,1) 100%);
+    background: linear-gradient(90deg, rgba(143,140,186,1) 0%, rgba(223,223,231,1) 35%, rgba(242,242,242,1) 100%);
+  }
+
+  .center {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 33% 33% 33%; 
+    /* flex-direction: column; */
+    /* align-items: center;
+    justify-content: center; */
+    /* height: 100vh;  */
+    /* 調整至適當高度 */
+    overflow-y: auto; /* Enables vertical scrolling */
+    max-height: 100vh; /* or set to a specific height */
+    height: 100%;
+  } 
+
+  .custom-h1 {
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+    align-self: end;
+  }
+
+  .button-group {
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+    align-self: start;
+  }
+
+  .image-container {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 4;
+    align-self: center;
+  }
+
 }
