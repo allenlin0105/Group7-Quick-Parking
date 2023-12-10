@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import { getUsageRate } from '../../services/service';
 
@@ -8,10 +8,16 @@ export default function DayUsagePlot(props){
 
   const fetchUsage = async (date) => {
     const { data } = await getUsageRate(date)
+    console.log('usage', data)
+    data.sort((a, b) => a.hour - b.hour);
     setUsageData(data)
   }
 
-  fetchUsage(date);
+  useEffect(() => {
+    setUsageData(null)
+    fetchUsage(date);
+  }, [date])
+
   const yAxisTickFormatter = (value) => `${value}%`;
 
   return (
@@ -30,7 +36,7 @@ export default function DayUsagePlot(props){
           domain={[0, 100]}
           tickFormatter={yAxisTickFormatter}
         /> {/* Set Y-axis domain to [0, 100] */}
-        <Bar dataKey="usage_rate" fill="#8884d8" >
+        <Bar dataKey="usage_rate" fill="#a9a5f0" >
           <LabelList dataKey="usage_rate" position="top"/>
         </Bar>
       </BarChart>

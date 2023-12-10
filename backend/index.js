@@ -210,13 +210,13 @@ async function space_info(parking_lot_id, space_id, start_day, end_day){
 async function usage_rate(parking_lot_id, date){
     const parking_lot_query = {parking_lot_id : parking_lot_id};
 	const parking_lot = await parking_lot_coll.findOne(parking_lot_query);
-
+    console.log('parking_lot', parking_lot)
     const end_time = Math.min(DateTime.now().setZone('Asia/Taipei').toMillis(), DateTime.fromISO(date).setZone('Asia/Taipei').endOf('day').toMillis());
     const start_time = DateTime.fromISO(date).setZone('Asia/Taipei').startOf('day').toMillis();
     
     let time = end_time;
     let hour = parseInt(DateTime.fromMillis(time).setZone('Asia/Taipei').toISO().split('T')[1].split(':')[0])
-    results = Array();
+    results = [];
     while(time >= start_time){
         const usage_query = {
             parking_lot_id : parking_lot_id,
@@ -227,8 +227,13 @@ async function usage_rate(parking_lot_id, date){
         results.push({ hour : hour, usage_rate : Math.round((n_cars / parking_lot.space_is_available.length) * 100)});
         time -= 1000 * 3600;
         hour--;
+        console.log('hour', hour)
     }
-    return results;
+    const uniqueResults = Array.from(new Set(results.map(item => item.hour)))
+        .map(hour => {
+            return results.find(item => item.hour === hour);
+        });
+    return uniqueResults;
 }
 
 async function login(id, passwd){

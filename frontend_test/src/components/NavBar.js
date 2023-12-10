@@ -25,7 +25,7 @@ const Navbar = ({home, search, searchCallBack}) => {
   return (
     <nav style={{
       border: 'none',
-      backgroundColor: 'grey',
+      backgroundColor: '#576575',
       display: 'flex',
       alignItems: 'center',
       padding: '0.3em',
@@ -53,7 +53,7 @@ const Navbar = ({home, search, searchCallBack}) => {
           transform: 'translate(-50%, -50%)', 
         }}
       >
-        <FaArrowLeft size={30} color="black" />
+        <FaArrowLeft size={30} color="white" />
       </button>
     )}
 
@@ -65,7 +65,7 @@ const Navbar = ({home, search, searchCallBack}) => {
         left: '50%',
         transform: 'translate(-50%, -50%)',
       }}>
-      <FaHome size={30} color="black" />
+      <FaHome size={30} color="white" />
       </Link>
     )}
   </div>

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const client = axios.create({
-  baseURL: 'http://localhost:8000/',
+  baseURL: 'http://localhost:8000/'
 });
 
 export function getSpaceInfo(spaceId, startDate, endDate) {
@@ -36,3 +36,13 @@ export function login(id, passwd) {
     { id: id, passwd: passwd });
 }
 
+export function getAvailableSpace() {
+  return client.get("/available_space");
+}
+
+export function postPark(plate, space_id) {
+  return client.post('/park', {
+    plate: plate,
+    space_id: space_id,
+  });
+}

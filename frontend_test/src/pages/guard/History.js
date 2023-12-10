@@ -107,7 +107,7 @@ export default function History(){
       data.usage_list.forEach((e) => {
         setEvents(prev => ([
           ...prev,
-          {...{title: e.plate, start: e.start_time, end: e.end_time ?? localTime.toLocaleString()}, color: 'lightblue', textColor: 'black'}
+          {...{title: e.plate, start: e.start_time, end: e.end_time ?? localTime.toLocaleString()}, color: "#d4d3ed", textColor: 'black'}
         ]));
       });
     }

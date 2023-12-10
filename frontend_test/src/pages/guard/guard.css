@@ -16,7 +16,7 @@
     align-items: baseline;
   }
 
-p1 {
+p {
     display: flex;
     margin-left: auto;
     font-size: 1.3em;

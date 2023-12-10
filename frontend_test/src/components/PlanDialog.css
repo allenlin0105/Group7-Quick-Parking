@@ -3,7 +3,7 @@
     font-size: 36px;
     font-weight: bold;
 }
-.reg-slotId {
+.reg-spaceId {
     color: green;
     font-size: 36px;
     font-weight: bold;
@@ -16,7 +16,7 @@
 .dialog-row {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     margin-left: 5px;
     /* gap: 20px; */
 }

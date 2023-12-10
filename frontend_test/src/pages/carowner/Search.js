@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useLocation } from 'react-router-dom'
+import Plan from "../../components/Plan"
 
 export default function Search() {
     const location = useLocation();
@@ -64,12 +65,12 @@ export default function Search() {
                     <p className = "info">到目前共計&nbsp; {calculateTotalParkingTime(parkingInfo.startTime)}</p>
                     <div style={{ height: '0.2em' }} /> {/* 更小的空行 */}
                     <p className = "info">停車位置</p>
-                    {/* 地圖 */}
+                    <Plan clicakble={false} locatedSpaceId={5}/> {/* TODO: pass the availableParking*/}
                 </div>
             ) : (
                 <div>
                     <h1 className='title'>查無入場紀錄！</h1>
-                {/* 地圖 */}
+                    <Plan clicakble={false} locatedSpaceId={null}/> {/* TODO: pass the availableParking*/}
                 </div>
             )}
         </div>

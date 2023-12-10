@@ -9,14 +9,18 @@
 
   .custom-h1 {
     font-size: 3.5em; /* 修改字型大小 */
-    margin-bottom: 10px; /* 調整下邊距 */
+    margin-top: 30px;
+    margin-bottom: 30px; /* 調整下邊距 */
+    color:#1b2928
   }
   
   .custom-h2 {
-    font-size: 1.8em; /* 修改字型大小 */
+    font-size: 1.5em; /* 修改字型大小 */
     margin-bottom: 20px; /* 調整下邊距 */
     padding-left: 100px; /* 左側間距 */
     padding-right: 100px; /* 右側間距*/
+    font-weight: normal;
+    color: #445c5b;
   }
   
   .identity_button {
@@ -110,6 +114,12 @@
 img {
   width: 100%;
   max-width: 768px;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 @media (min-width: 768px) {

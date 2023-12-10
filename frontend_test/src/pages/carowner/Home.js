@@ -49,11 +49,10 @@ export default function Home() {
             <div className="header">
                 <h1 className='title'>停車場綜覽</h1>
                 <div>
-                    <p1>目前空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p1>
+                    <p>目前空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p>
                 </div>
             </div>           
-            {/* 地圖 */}
-            <Plan guard={false}/>
+            <Plan />
         </div>
     )
 };
