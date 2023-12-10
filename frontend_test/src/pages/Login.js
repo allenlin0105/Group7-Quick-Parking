@@ -1,20 +1,24 @@
 import React, { useState } from "react"
 import "./Home.css"
-
+import { login } from "../services/service.js"
 export default function Login({ onClose, onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // 假設這是你的後端驗證邏輯
-    const validCredentials = {
-      username: 'user123',
-      password: 'password123',
-    };
+  const handleLogin = async () => {
+    // // 假設這是你的後端驗證邏輯
+    // const validCredentials = {
+    //   username: 'user123',
+    //   password: 'password123',
+    // };
 
+    const { data } = await login(username, password);
+
+    console.log(data)
     // 比對輸入的帳號密碼與系統中存儲的資訊
-    if (username === validCredentials.username && password === validCredentials.password) {
+    if (data.status === 200) {
       // 登入成功
+      localStorage.setItem('token', data.token);
       onLogin();
       onClose();
     } else {

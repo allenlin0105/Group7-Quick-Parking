@@ -1,9 +1,11 @@
 import React, { useState, useEffect }  from "react"
 import "./carowner.css"
 import Plan from "../../components/Plan";
+import { getAvailalbeSpace } from "../../services/service";
 
 export default function Home() {
     const [availableSlots, setAvailableSlots] = useState(46); // 初始可停車位數量
+    const [totalSlots, setTotalSlots] = useState(0);
 
     // useEffect(() => {
     //     // 使用fetch向後端發送GET請求
@@ -23,6 +25,13 @@ export default function Home() {
     //     });
     // }, []); // 空依賴數組表示只在組件首次渲染時發送請求
 
+    const setSpaceNumber = async() => {
+        const { data } = await getAvailalbeSpace();
+        setAvailableSlots(data.n_available_space);
+        setTotalSlots(data.total_space);
+    }
+    setSpaceNumber();
+
     // 模擬後端數據更新
     useEffect(() => {
         // 這裡模擬從後端獲取數據，實際情況需要根據你的後端設置
@@ -40,7 +49,7 @@ export default function Home() {
             <div className="header">
                 <h1 className='title'>停車場綜覽</h1>
                 <div>
-                    <p1>目前空位： <span className="availnum">{availableSlots}</span> &nbsp;/ 46</p1>
+                    <p1>目前空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p1>
                 </div>
             </div>           
             {/* 地圖 */}

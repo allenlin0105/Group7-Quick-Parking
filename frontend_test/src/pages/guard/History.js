@@ -88,29 +88,29 @@ export default function History(){
   const [events, setEvents] = useState([]);
   const getEvents = (data) => {
     setEvents([])
-    data.forEach((space) => {
-      if (space.usageRate) {
+    data.utilities.forEach((e) => {
+      setEvents(prev => ([
+        ...prev,
+        {
+          title: e.utility.toString(),
+          start: e.date,
+          end: e.date,
+          // styles
+          // textColor: "black",
+          className: "all-day-event"
+        }
+      ]));
+    });
+
+    if(data.usage_list.length > 0){
+      const localTime = new Date();
+      data.usage_list.forEach((e) => {
         setEvents(prev => ([
           ...prev,
-          {
-            title: space.usageRate.toString(),
-            start: space.date,
-            end: space.date,
-            // styles
-            // textColor: "black",
-            className: "all-day-event"
-          }
+          {...{title: e.plate, start: e.start_time, end: e.end_time ?? localTime.toLocaleString()}, color: 'lightblue', textColor: 'black'}
         ]));
-      }
-      if (space.usages.length > 0) {
-        space.usages.forEach((e) => {
-          setEvents(prev => ([
-            ...prev,
-            {...{title: e.plateNumber, start: e.start, end: e.end}, color: 'lightblue', textColor: 'black'}
-          ]));
-        })
-      }
-    })
+      });
+    }
   }
 
   const fetchEvents = async (startDate, endDate) => {
