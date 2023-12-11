@@ -15,7 +15,15 @@ export function DayUsagePlotDialog(props) {
   return (
     <Dialog onClose={handleClose} open={open} 
           fullWidth={true}
-          maxWidth={'xl'}>
+          maxWidth={'xl'}
+          PaperProps={{
+            style: { 
+              borderRadius: '10px',
+              padding: 5
+              // maxHeight: 386, // Set max height
+            }
+          }}
+    >
       <IconButton
         aria-label="close"
         onClick={onClose}
@@ -28,7 +36,7 @@ export function DayUsagePlotDialog(props) {
       >
         <CloseIcon />
       </IconButton>
-      <DialogTitle>{date}</DialogTitle>
+      <DialogTitle sx={{fontWeight: "bold", fontSize: "1.5em", marginTop: 1}}>{date?.replace(/-/g, '/')} 使用率</DialogTitle>
       <DialogContent>
         <DayUsagePlot date={date}/>
       </DialogContent>

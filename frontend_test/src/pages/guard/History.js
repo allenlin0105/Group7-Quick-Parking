@@ -4,6 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import "./History.css";
+import "./guard.css"
 import { format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 import locale from '@fullcalendar/core/locales/zh-tw';
@@ -62,7 +63,7 @@ export default function History(){
   };
 
   const handleAllDayContent = (args) => {
-    return(<span>使用率</span>)
+    return(<span style={{fontWeight: 'bold'}}>使用率</span>)
   }
 
   const handleEventClick = (clickInfo) => {
@@ -96,7 +97,6 @@ export default function History(){
           start: e.date,
           end: e.date,
           // styles
-          // textColor: "black",
           className: "all-day-event"
         }
       ]));
@@ -107,9 +107,10 @@ export default function History(){
       data.usage_list.forEach((e) => {
         setEvents(prev => ([
           ...prev,
-          {...{title: e.plate, start: e.start_time, end: e.end_time ?? localTime.toLocaleString()}, color: "#d4d3ed", textColor: 'black'}
+          {...{title: e.plate, start: e.start_time, end: e.end_time ?? localTime.toISOString()}, color: "#ebebeb", textColor: 'black'}
         ]));
       });
+      console.log('events', events)
     }
   }
 
@@ -132,8 +133,8 @@ export default function History(){
   console.log('spaceId', spaceId)
   return (
     <>
-      <div style={{padding: 8}}>
-        <h1>車位 {spaceId}</h1>
+      <div className="home-container">
+        <h1 className='title'>車位 {spaceId}</h1>
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="timeGridWeek"

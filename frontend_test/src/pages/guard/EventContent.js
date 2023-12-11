@@ -19,9 +19,9 @@ export const EventContent = ({ eventInfo }) => {
   });
 
   // Default rendering for non-all-day events
-  const startTime = format(eventInfo.event.start, 'HH:mm');
+  const startTime = format(eventInfo.event.start, 'MM/dd HH:mm');
   const endTime = eventInfo.event.end
-    ? format(eventInfo.event.end, 'HH:mm')
+    ? format(eventInfo.event.end, 'MM/dd HH:mm')
     : '';
 
   return (
