@@ -61,7 +61,7 @@ export default function Home() {
     useEffect(() => {
         setSpaceNumber()
     },[])
-    
+
     // // 模擬後端數據更新
     // useEffect(() => {
     //     // 這裡模擬從後端獲取數據，實際情況需要根據你的後端設置
@@ -87,7 +87,9 @@ export default function Home() {
                 </div>
                 {/* 車位利用率折線圖 */}       
                 {/* 地圖 */}
+                <h2 className='subtitle'>當日使用率</h2>
                 <DayUsagePlot date={format(today, 'yyyy-MM-dd')}/>
+                <h2 className='subtitle'>目前停車場狀況</h2>
                 <Plan guard={true}/>
             </div>
         </div>

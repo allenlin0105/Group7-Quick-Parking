@@ -16,17 +16,24 @@ export function EventDetailsDialog(props) {
 
   // Default rendering for non-all-day events
   const startTime = start
-    ? format(start, 'HH:mm')
+    ? format(start, 'MM/dd HH:mm')
     : '';
   const endTime = end
-    ? format(end, 'HH:mm')
+    ? format(end, 'MM/dd HH:mm')
     : '';
 
   return (
     <Dialog 
         onClose={handleClose} open={open} 
         fullWidth={true}
-        maxWidth={'sm'}
+        maxWidth={'xs'}
+        PaperProps={{
+          style: { 
+            borderRadius: '10px',
+            padding: 5
+            // maxHeight: 386, // Set max height
+          }
+        }}
     >
       <IconButton
         aria-label="close"
@@ -40,13 +47,13 @@ export function EventDetailsDialog(props) {
       >
         <CloseIcon />
       </IconButton>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <div className="details">
-          {startTime} ~ {" "}
+      <DialogTitle sx={{fontWeight: "bold", fontSize: "1.5em"}}>{title}</DialogTitle>
+      <DialogContent sx={{fontSize: "1.15em", lineHeight: 1.75, color: '#6b7078'}}>
+        <div>
+          停車時間：{startTime} ~ {" "}
           {endTime && <span>{endTime}</span>}
         </div>
-        <div className="details">
+        <div>
           共計 {calculateDurationInHours(start, end)} 小時
         </div>
       </DialogContent>

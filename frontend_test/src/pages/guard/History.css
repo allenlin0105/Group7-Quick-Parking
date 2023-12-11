@@ -8,13 +8,18 @@
 
 .all-day-event {
   border: 0;
-  color: black;
+  color: #61466b;
   font-weight: bold;
   background-color: transparent;
 }
 
 .fc-event:hover {
   cursor: pointer;
+}
+
+.fc-timegrid-slot-label-frame {
+  text-align: center !important;
+  color: gray;
 }
 
 .all-day-event-container {
@@ -37,10 +42,13 @@
 }
 
 .car-number {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .details {
   font-size: 16px;
+  color: #5f636a;
 }

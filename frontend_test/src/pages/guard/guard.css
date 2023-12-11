@@ -1,6 +1,9 @@
 .home-container {
-    padding-left: 1em; /* 左側邊距 */
-    padding-right: 1em; /* 左側邊距 */
+    padding-left: 2em; /* 左側邊距 */
+    padding-right: 2em; /* 左側邊距 */
+    padding-top: 0.5em;
+    max-width: 1800px;
+    margin: 0 auto;
   }
  
 .header {
@@ -12,8 +15,8 @@
 .title {
     font-size: 2.3em;
     font-weight: bold;
-    margin-left: 0.3em;
-    align-items: baseline;
+    /* margin-left: 0.3em; */
+    /* align-items: baseline; */
   }
 
 p {
@@ -81,4 +84,11 @@ p {
     height: 100%;
     background-color: rgba(211, 209, 209, 0.762); /* 半透明的灰色背景 */
     z-index: 0; /* 設置遮罩的堆疊順序，比登入框更低 */
+}
+
+.subtitle {
+    background-color: rgba(240, 240, 240, 0.762);
+    padding:8px 16px 10px 16px;
+    border-radius: 10px;
+    color: #1b2928;
 }
