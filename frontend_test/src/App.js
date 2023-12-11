@@ -10,6 +10,7 @@ import GuardHome from "./pages/guard/Home"
 import GuardHistory from "./pages/guard/History"
 import GuardParking from "./pages/guard/Parking"
 import GuardLeaving from "./pages/guard/Leaving"
+import ProtectedRoute from './components/ProtectedRoutes';
 
 export default function App() {
   // define all the Route(s)s here, nested "Routes"s lead to conflict error.
@@ -17,7 +18,11 @@ export default function App() {
     <>
       <Routes>
         <Route index element={<Home/>} />
-        <Route path="guard" element={<GuardNav />}>
+        <Route path="guard" element={
+          <ProtectedRoute>
+            <GuardNav />
+          </ProtectedRoute>
+          }>
           <Route index element={<GuardHome/> } />
           <Route path='history' element={<GuardHistory/>} />
           <Route path='parking' element={<GuardParking/>} />

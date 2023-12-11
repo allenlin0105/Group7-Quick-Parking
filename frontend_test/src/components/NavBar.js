@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaHome, FaSearch } from 'react-icons/fa'; // Import the necessary icons
 
 const Navbar = ({home, search, searchCallBack}) => {
@@ -7,12 +7,18 @@ const Navbar = ({home, search, searchCallBack}) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    // Every search uses a navigate, so the navigate(-1) goes baco to the last search.
+    // Every search uses a navigate, so the navigate(-1) goes back to the last search.
     // Since search is only in carowner, navigate back to it instead of -1.
     if (search)
         navigate('/carowner');
     else
         navigate('/guard');
+  }
+
+  const handleHome = () => {
+    if (!search)
+      localStorage.clear();
+    navigate("/");
   }
 
   const handleSearch = (event) => {
@@ -58,7 +64,7 @@ const Navbar = ({home, search, searchCallBack}) => {
     )}
 
     {home && (
-      <Link to="/" style={{
+      <div onClick={handleHome} style={{
         marginRight: '1em',
         position: 'absolute',
         top: '55%',
@@ -66,7 +72,7 @@ const Navbar = ({home, search, searchCallBack}) => {
         transform: 'translate(-50%, -50%)',
       }}>
       <FaHome size={30} color="white" />
-      </Link>
+      </div>
     )}
   </div>
 
