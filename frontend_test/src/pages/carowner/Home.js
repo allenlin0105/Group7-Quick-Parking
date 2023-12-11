@@ -52,7 +52,7 @@ export default function Home() {
                     <p>目前空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p>
                 </div>
             </div>           
-            <Plan />
+            <Plan clickable={false}/>
         </div>
     )
 };

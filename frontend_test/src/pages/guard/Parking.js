@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './guard.css'; // 添加你的樣式文件
+import Plan from '../../components/Plan';
 
 
 export default function Parking() {
@@ -13,7 +14,8 @@ export default function Parking() {
 
     return (
         <div className="home-container">
-            <h1>進出場系統</h1>
+            <h1>登記系統</h1>
+            <Plan autoPark={true} />
         </div>
     )
 }

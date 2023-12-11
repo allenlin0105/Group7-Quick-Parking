@@ -40,6 +40,22 @@ export function getAvailableSpace() {
   return client.get("/available_space");
 }
 
+export function getCars() {
+  return client.get("/get_cars");
+}
+
+export function findCar(plate) {
+  return client.post("/find_car", {
+    plate: plate
+  });
+}
+
+export function leave(space_id) {
+  return client.post("/leave", {
+    space_id: space_id
+  });
+}
+
 export function postPark(plate, space_id) {
   return client.post('/park', {
     plate: plate,

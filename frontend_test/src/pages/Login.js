@@ -55,6 +55,11 @@ export default function Login({ open, onClose, onLogin }) {
   const goToRegisterPage = () => {
     navigate('/guard/parking')
   }
+  
+  const goToLeavePage = () => {
+    navigate('/guard/leaving')
+  }
+
 
   const buttonStyle = {
     bgcolor: '#1b2928', // Grey background
@@ -127,16 +132,22 @@ export default function Login({ open, onClose, onLogin }) {
       showMenu ? 
         <div style={{ display: 'flex', gap: 10}}>
           <Button 
-              onClick={goToManagePage}
-              sx={buttonStyle}
-          >
-              進入管理系統
-          </Button>
-          <Button 
               onClick={goToRegisterPage}
               sx={buttonStyle}
           >
               進入登記系統
+          </Button>
+          <Button 
+              onClick={goToLeavePage}
+              sx={buttonStyle}
+          >
+              進入離場系統
+          </Button>
+          <Button 
+              onClick={goToManagePage}
+              sx={buttonStyle}
+          >
+              進入管理系統
           </Button>
         </div>
         :

@@ -6,7 +6,13 @@ import PlanDialog from './PlanDialog';
 import { getAvailableSpace } from '../services/service';
 
 export default function Plan(props) {
-    const { editable = false, guard = false, locatedSpaceId = null, clickable = true} = props;
+    const { 
+        editable = false,
+        guard = false, 
+        locatedSpaceId = null, 
+        clickable = true,
+        autoPark = false,
+    } = props;
     const initPlan = editable ? [] : planData;
     const [plan, setPlan] = useState(initPlan);
     const [selectedSpacdId, setSelectedSpacdId] = useState(null);
@@ -17,6 +23,48 @@ export default function Plan(props) {
     const canvasRef = useRef(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false); // https://mui.com/material-ui/react-dialog/#form-dialogs
+
+    useEffect(() => {
+        let intervalId;
+
+        // Function to randomly click an available space
+        const randomClickAvailableSpace = () => {
+            const availableSpaces = plan.filter(space => !space.occupied);
+            if (availableSpaces.length === 0) {
+                return; // No available spaces
+            }
+            
+            const randomIndex = Math.floor(Math.random() * availableSpaces.length);
+            const randomSpace = availableSpaces[randomIndex];
+            
+            // Simulate a click event
+            const canvas = canvasRef.current;
+            const rect = canvas.getBoundingClientRect();
+            const simulatedX = randomSpace.x + rect.left;
+            const simulatedY = randomSpace.y + rect.top;
+            console.log(simulatedX, simulatedY);
+    
+            // Dispatch a click event to the canvas
+            const simulatedEvent = new MouseEvent('click', {
+                clientX: simulatedX,
+                clientY: simulatedY,
+                bubbles: true,
+                cancelable: true,
+                view: window,
+            });
+            canvas.dispatchEvent(simulatedEvent);
+        };
+
+        // Check if autoPark is set and it's the initial page load, then start the interval
+        if (autoPark && !open) {
+            intervalId = setInterval(randomClickAvailableSpace, 3000); // Random click every 2 seconds
+        }
+
+        // Cleanup the interval when the component unmounts
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [autoPark, open, plan]);
 
     useEffect(() => {
         const handleGetAvailableSpace = async () => {
@@ -207,7 +255,7 @@ export default function Plan(props) {
         const space = plan.find(space => {
             return isMouseOverspace(x, y, space);
         });
-        if (space === undefined ||
+        if (space === undefined || clickable === false ||
             (guard === false && locatedSpaceId !== null) ) {
             canvas.style.cursor = 'default';
         }
