@@ -8,6 +8,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useNavigate } from 'react-router-dom';
+import { FaArrowRight } from "react-icons/fa";
 
 export default function Login({ open, onClose, onLogin }) {
   const [username, setUsername] = useState('');
@@ -30,6 +31,7 @@ export default function Login({ open, onClose, onLogin }) {
     if (data.status === 200) {
       // 登入成功
       localStorage.setItem('token', data.token);
+      setShowError(false)
       setShowMenu(true)
       // onLogin();
       // handleClose();
@@ -90,10 +92,10 @@ export default function Login({ open, onClose, onLogin }) {
       }
     }}
   >
-    <DialogTitle sx={{fontWeight: "bold", fontSize: "1.25em"}}>
+    <DialogTitle sx={{fontWeight: "bold", fontSize: "26px"}}>
       登入系統
     </DialogTitle>
-    <DialogContent>
+    <DialogContent sx={{fontSize: "18px"}}>
       <div className="dialog-row">
          <span>帳號：</span>
          <TextField
@@ -108,26 +110,26 @@ export default function Login({ open, onClose, onLogin }) {
            }}
          />
       </div>
-        <div className="dialog-row">
-          <span>密碼：</span>
-          <TextField
-            type="password"
-            placeholder="請輸入密碼"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            size="small"
-            style={{
-              width: '80%',
-              paddingTop: 5,
-              paddingBottom: 5
-            }}
-          />
-        </div>
-        {
-          showError && <span style={{color: 'red'}}>登入失敗，請檢查帳號密碼</span>
-        }
+      <div className="dialog-row">
+        <span>密碼：</span>
+        <TextField
+          type="password"
+          placeholder="請輸入密碼"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          size="small"
+          style={{
+            width: '80%',
+            paddingTop: 5,
+            paddingBottom: 5
+          }}
+        />
+      </div>
+      {
+        showError && <span style={{color: 'red'}}>登入失敗，請檢查帳號密碼</span>
+      }
     </DialogContent>
-    <DialogActions>
+    <DialogActions sx={{fontSize: "18px"}}>
       {
       showMenu ? 
         <div style={{ display: 'flex', gap: 10}}>
@@ -135,19 +137,22 @@ export default function Login({ open, onClose, onLogin }) {
               onClick={goToRegisterPage}
               sx={buttonStyle}
           >
-              進入登記系統
+              登記系統{" "}
+              <FaArrowRight style={{marginTop: -3}}/>
           </Button>
           <Button 
               onClick={goToLeavePage}
               sx={buttonStyle}
           >
-              進入離場系統
+              離場系統{" "}
+              <FaArrowRight style={{marginTop: -3}}/>
           </Button>
           <Button 
               onClick={goToManagePage}
               sx={buttonStyle}
           >
-              進入管理系統
+              管理系統{" "}
+              <FaArrowRight style={{marginTop: -3}}/>
           </Button>
         </div>
         :

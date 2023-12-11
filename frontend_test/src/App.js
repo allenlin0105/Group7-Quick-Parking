@@ -11,6 +11,7 @@ import GuardHistory from "./pages/guard/History"
 import GuardParking from "./pages/guard/Parking"
 import GuardLeaving from "./pages/guard/Leaving"
 import ProtectedRoute from './components/ProtectedRoutes';
+import CarNotFound from './pages/carowner/CarNotFound'
 
 export default function App() {
   // define all the Route(s)s here, nested "Routes"s lead to conflict error.
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="carowner" element={<CarOwnerNav />}>
           <Route index element={<CarOwnerHome />} />
           <Route path="search" element={<CarOwnerSearch />} />
+          <Route path="not_found" element={<CarNotFound />} />
           <Route path='*' element={<Navigate to="/" replace />} />
         </Route>
         <Route path='*' element={<Navigate to="/" replace />} />

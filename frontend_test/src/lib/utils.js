@@ -13,7 +13,7 @@ export const calculateDurationInHours = (startTime, endTime) => {
     return duration;
   };
 
-export const getToday = () => {
-  const today = new Date()
-  return format(today, 'yyyy-MM-dd')
-}
+// export const getToday = () => {
+//   const today = new Date()
+//   return format(today, 'yyyy-MM-dd')
+// }

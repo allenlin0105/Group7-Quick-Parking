@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react"
-import ActionSelection from './ActionSelection';
 import Parking from './Parking';
 import "./guard.css";
 import Plan from "../../components/Plan";
 import { getAvailalbeSpace } from "../../services/service";
 import DayUsagePlot from "./DayUsagePlot.js";
-import { getToday } from "./lib/utils.js";
 import { format } from "date-fns"
 
 export default function Home() {
@@ -24,17 +22,7 @@ export default function Home() {
     //     setTodayDate(format(today, 'yyyy-MM-dd'))
     //     console.log('todayDate', todayDate)
     // }
-    const [showActionSelection, setShowActionSelection] = useState(true);
-    const [showParking, setShowParking] = useState(false);
 
-    const handleParkingStatus = () => {
-        setShowActionSelection(false);
-    };
-
-    const handleEnterParking = () => {
-        setShowParking(true);
-        setShowActionSelection(false); // 在進入 Parking 時隱藏框框
-    };
     // useEffect(() => {
     //     // 使用fetch向後端發送GET請求
     //     fetch('/api/getAvailableSlots') // 假設後端API端點為/api/getAvailableSlots

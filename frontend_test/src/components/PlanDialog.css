@@ -1,17 +1,13 @@
 /* PlanDialog.css */
 .reg-string {
-    font-size: 36px;
+    font-size: 26px;
     font-weight: bold;
 }
 .reg-spaceId {
     color: green;
-    font-size: 36px;
-    font-weight: bold;
 }
 .reg-plate {
     color: #C56363;
-    font-size: 36px;
-    font-weight: bold;
 }
 .dialog-content {
     font-size: 24px;

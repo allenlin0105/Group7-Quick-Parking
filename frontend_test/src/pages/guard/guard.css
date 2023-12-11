@@ -3,7 +3,7 @@
     padding-right: 2em; /* 左側邊距 */
     padding-top: 0.5em;
     max-width: 1800px;
-    margin: 0 auto;
+    /* margin: 0 auto; */
   }
  
 .header {
@@ -13,7 +13,7 @@
 }
 
 .title {
-    font-size: 2.3em;
+    font-size: 2.1em;
     font-weight: bold;
     /* margin-left: 0.3em; */
     /* align-items: baseline; */
@@ -38,11 +38,11 @@ p {
     color: red;
 }
 
-.info {
+/* .info {
     margin-left: 0.8em;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-}
+} */
 
 .selection-container {
     position: fixed;

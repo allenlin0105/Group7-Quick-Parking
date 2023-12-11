@@ -1,17 +1,13 @@
-.home-container {
-    
-    padding-left: 1em; /* 左側邊距 */
-    padding-right: 1em; /* 左側邊距 */
+.carowner-container {
+    padding-left: 2em; /* 左側邊距 */
+    padding-right: 2em; /* 左側邊距 */
+    padding-top: 0.5em;
+    max-width: 800px;
+    margin: 0 auto;
   }
  
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .title {
-  font-size: 2.3em;
+  font-size: 2.1em;
   font-weight: bold;
   /* margin-left: 0.3em; */
   /* align-items: baseline; */
@@ -37,7 +33,10 @@ p {
 }
 
 .info {
-    margin-left: 0.8em;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin-left: 17px;
+    line-height: 1.25;
+}
+
+input:focus {
+  outline: none;
 }

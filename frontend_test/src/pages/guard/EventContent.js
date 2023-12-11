@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { format } from 'date-fns';
-import { calculateDurationInHours } from "./lib/utils"
+import { calculateDurationInHours } from "../../lib/utils"
 
 export const EventContent = ({ eventInfo }) => {
   const contentRef = useRef(null);

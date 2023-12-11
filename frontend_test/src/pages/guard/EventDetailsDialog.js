@@ -1,7 +1,7 @@
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import { calculateDurationInHours } from "./lib/utils"
+import { calculateDurationInHours } from "../../lib/utils"
 import { format } from 'date-fns';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';

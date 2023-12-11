@@ -43,7 +43,7 @@ export default function Leaving() {
                 try {
                     const { data } = await findCar(randomPlate);
 
-                    if (data === "not found" || data.space_id === 0) {
+                    if (data.space_id === -1) {
                         continue;
                     }
             
@@ -89,18 +89,18 @@ export default function Leaving() {
         navigate('/guard/leaving');
     }, [navigate]);
     const buttonStyle = {
-        bgcolor: '#F7F7F7', // Grey background
-        color: 'black', // White text color
+        bgcolor: '#1b2928', // Grey background
+        color: 'white', // White text color
         '&:hover': {
-        bgcolor: 'darkgrey' // Darker grey on hover
+          bgcolor: 'darkgrey',
+          color: 'black'
         },
-        borderRadius: '8px', // Rectangle shape with slight rounding
-        textTransform: 'none', // Prevent uppercase text
-        width: '113px',
-        height: '49px',
-        fontWeight: 'regular',
-        fontSize: '24px',
-        border: '1px solid #8F8D8D',
+        borderRadius: '10px', // Rectangle shape with slight rounding
+        fontSize: '1em',
+        paddingTop: '6px',
+        paddingBottom: '3px',
+        paddingLeft: '10px',
+        paddingRight: '10px'
       }
 
     const handleCheckLeave = () => {
@@ -165,44 +165,40 @@ export default function Leaving() {
             )}
             <Dialog open={open} onClose={() => setOpen(false)} 
                 PaperProps={{
-                style: { 
-                  borderRadius: 29,
-                  width: 588,  // Set width
-                  maxHeight: 386, // Set max height
+                    style: { 
+                    borderRadius: '10px',
+                    width: '100%',  // Set width
+                    maxWidth: 480,
+                    padding: 5
+                    // maxHeight: 386, // Set max height
                 }
               }}>
                 <DialogTitle>
                     <span className="reg-string">
                         {`確定離場 `}
                     </span>
-                    <span className="reg-plate">
+                    <span className="reg-string reg-plate">
                         {plate}
                     </span>
                 </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        <span className="dialog-row">
-                            <span className="dialog-content">
-                                {`停放開始時間： ${parkingInfo?.startTime}`}
-                            </span>
+                <DialogContent sx={{fontSize: "18px", lineHeight: '1.75'}}>
+                    <div className="dialog-row">
+                        <span>
+                            {`停放開始時間： ${parkingInfo?.startTime}`}
                         </span>
-                    </DialogContentText>
-                    <DialogContentText>
-                        <span className="dialog-row">
-                            <span className="dialog-content">
-                                {`目前時間： ${parkingInfo?.endTime}`}
-                            </span>
+                    </div>
+                    <div className="dialog-row">
+                        <span>
+                            {`目前時間： ${parkingInfo?.endTime}`}
                         </span>
-                    </DialogContentText>
-                    <DialogContentText>
-                        <span className="dialog-row">
-                            <span className="dialog-content">
-                                {`到目前共計 ${parkingInfo?.usedTime}`}
-                            </span>
+                    </div>
+                    <div className="dialog-row">
+                        <span>
+                            {`到目前共計 ${parkingInfo?.usedTime}`}
                         </span>
-                    </DialogContentText>
+                    </div>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions  sx={{fontSize: "18px"}}>
                     <Button onClick={() => setOpen(false)} sx={buttonStyle}>取消</Button>
                     <Button onClick={handleCheckLeave} autoFocus  sx={buttonStyle}>
                         確認

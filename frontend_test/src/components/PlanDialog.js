@@ -8,6 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import './PlanDialog.css';
 import { postPark } from '../services/service';
+import { format } from "date-fns"
 
 export default function PlanDialog(props) {
   const { open, onClose, spaceId } = props;
@@ -50,7 +51,7 @@ const generateRandomCarPlate = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const localTime = new Date();
-      setCurrentTime(localTime.toLocaleString());
+      setCurrentTime(format(localTime, 'yyyy/MM/dd HH:mm'));
     }, 1000);
 
     if (open) {
@@ -60,18 +61,18 @@ const generateRandomCarPlate = () => {
   }, [open]);
 
   const buttonStyle = {
-    bgcolor: '#F7F7F7', // Grey background
-    color: 'black', // White text color
+    bgcolor: '#1b2928', // Grey background
+    color: 'white', // White text color
     '&:hover': {
-      bgcolor: 'darkgrey' // Darker grey on hover
+      bgcolor: 'darkgrey',
+      color: 'black'
     },
-    borderRadius: '8px', // Rectangle shape with slight rounding
-    textTransform: 'none', // Prevent uppercase text
-    width: '113px',
-    height: '49px',
-    fontWeight: 'regular',
-    fontSize: '24px',
-    border: '1px solid #8F8D8D',
+    borderRadius: '10px', // Rectangle shape with slight rounding
+    fontSize: '1em',
+    paddingTop: '6px',
+    paddingBottom: '3px',
+    paddingLeft: '10px',
+    paddingRight: '10px'
 }
 
   return (
@@ -80,9 +81,11 @@ const generateRandomCarPlate = () => {
       onClose={onClose}
       PaperProps={{
         style: { 
-          borderRadius: 29,
-          width: 588,  // Set width
-          maxHeight: 386, // Set max height
+          borderRadius: '10px',
+          width: '100%',  // Set width
+          maxWidth: 480,
+          padding: 5
+          // maxHeight: 386, // Set max height
         }
       }}
     >
@@ -90,13 +93,13 @@ const generateRandomCarPlate = () => {
         <span className="reg-string">
             {`登記車位 `}
         </span>
-        <span className="reg-spaceId">
+        <span className="reg-spaceId reg-string">
             {spaceId}
         </span>
       </DialogTitle>
-      <DialogContent>
-        <span className="dialog-row">
-          <span className="dialog-content">輸入車牌:</span>
+      <DialogContent sx={{fontSize: "18px"}}>
+        <div className="dialog-row">
+          <span>{`輸入車牌：`}</span>
           <TextField
             // autoFocus
             // margin="dense"
@@ -107,22 +110,24 @@ const generateRandomCarPlate = () => {
             // variant="standard"
             value={carPlate}
             onChange={(e) => setCarPlate(e.target.value)}
-            InputProps={{ sx: { width: 300, height: 36, bgcolor: '#D9D9D9', } }}
+            size="small"
+            style={{
+              width: '75%',
+              paddingTop: 5,
+              paddingBottom: 5
+            }}
           />
-        </span>
-        <DialogContentText>
-        <span className="dialog-row">
-
-          <span className="dialog-content">
-              {`目前時間:`}
+        </div>
+        <div className="dialog-row">
+          <span>
+              {`目前時間：`}
           </span>
-          <span className="dialog-content">
+          <span>
               {`${currentTime}`}
           </span>
-        </span>
-        </DialogContentText>
+        </div>
       </DialogContent>
-      <DialogActions>   
+      <DialogActions sx={{fontSize: "18px"}}>   
         <Button 
             onClick={onClose}
             sx={buttonStyle}

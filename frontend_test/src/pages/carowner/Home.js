@@ -2,6 +2,10 @@ import React, { useState, useEffect }  from "react"
 import "./carowner.css"
 import Plan from "../../components/Plan";
 import { getAvailalbeSpace } from "../../services/service";
+import Button from '@mui/material/Button';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { findCar } from '../../services/service';
+import SearchBar from "../../components/SearchBar";
 
 export default function Home() {
     const [availableSlots, setAvailableSlots] = useState(46); // 初始可停車位數量
@@ -44,15 +48,34 @@ export default function Home() {
         return () => clearInterval(interval); // 清除interval
     }, []);
 
+    const navigate = useNavigate();
+    const navSearch = async (text) => {
+        console.log(text);
+        const { data } = await findCar(text)
+        console.log('data', data)
+        if(data.space_id === -1) {
+            navigate('/carowner/not_found/', { state: { carId: text }});
+        }
+        else {
+            navigate('/carowner/search/',  { state: { 
+                carId: text, 
+                spaceId: data.space_id, 
+                startTime: data.start_time
+            }});
+        }
+    } 
+
     return (
-        <div className="home-container">
-            <div className="header">
-                <h1 className='title'>停車場綜覽</h1>
+        <div className="carowner-container">
+            <div style={{display: 'flex', alignItems: 'center'}}>
+                <SearchBar searchCallBack={navSearch}/>
+            </div>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <div>
-                    <p>目前空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p>
-                </div>
-            </div>           
-            <Plan clickable={false}/>
+                    <p>停車場空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p>
+                </div>         
+                <Plan clickable={false}/>
+            </div>
         </div>
     )
 };

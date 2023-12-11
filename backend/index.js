@@ -173,8 +173,8 @@ async function find_car(parking_lot_id, plate){
                 return -1;
             return {
                 space_id : i,
-                start_time: parking_lot.start_time[i] / 1000,
-                used_time : (Date.now() - parking_lot.start_time[i]) / 1000,
+                start_time: time_converter(parking_lot.start_time[i])
+                // used_time : (Date.now() - parking_lot.start_time[i]) / 1000,
             };
         }
     }
@@ -352,7 +352,7 @@ app.post('/find_car', async (req, res) => {
     const result = await find_car(parking_lot_id, plate)
     console.log(JSON.stringify(result) + '\n');
     if(result == -1)
-        res.send("not found");
+        res.send({"message": "not found", "space_id": -1});
     else{
         res.send(result); 
 	}
