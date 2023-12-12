@@ -13,6 +13,7 @@ env:
   SOURCE_PATH: frontend_test
   CLUSTER_NAME: QuickParkingCluster
   DEPLOYMENT_NAME: frontend-deployment
+  REACT_APP_API_URL: http://20.239.121.201/api/
 
 jobs:
   build:
@@ -34,6 +35,8 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
+        touch ${{ env.SOURCE_PATH }}/.env
+        echo REACT_APP_API_URL=${{ env.REACT_APP_API_URL }} >> ${{ env.SOURCE_PATH }}/.env
         docker build ${{ env.SOURCE_PATH }} \
           --tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
