@@ -12,5 +12,4 @@ RUN TZ=Asia/Taipei \
     && echo $TZ > /etc/timezone \
     && dpkg-reconfigure -f noninteractive tzdata
 
-EXPOSE 3000
 CMD [ "node", "index.js" ]
