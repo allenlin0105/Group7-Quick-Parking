@@ -1,44 +1,65 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
-
-import axios from "axios";
-async function click() {
-  try {
-    const Data = await axios.get("/api/test");
-    const data = Data.data;
-    console.log(data);
-  } catch (error) {
-    console.log(error);
-  }
-}
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import "./Home.css"
+import Login from './Login';
+import { Button } from '@mui/material';
 
 export default function Home() {
-    // todo: a pop up login here.
-    return (
+  const [showLogin, setShowLogin] = useState(false);
+
+  const handleLoginClose = () => {
+    setShowLogin(false);
+  };
+
+  const handleLogin = () => {
+    setShowLogin(true);
+  };
+  // const navigate = useNavigate();
+  // const handleSuccessfulLogin = () => {
+  //   // 登入成功後的處理
+  //   // 可以導航到GuardHome
+  //   navigate('/guard');
+  // };
+
+  const buttonStyle = {
+    bgcolor: '#1b2928', // Grey background
+    color: 'white', // White text color
+    '&:hover': {
+      bgcolor: 'darkgrey',
+      color: 'black'
+    },
+    borderRadius: '8px', // Rectangle shape with slight rounding
+    width: '200px',
+    height: '50px',
+    fontWeight: 'bold',
+    fontSize: '1.8em',
+    paddingTop: '30px',
+    paddingBottom: '25px'
+}
+
+
+  return (
+    <div className='home-container home-gradient'>
+      <Login open={showLogin} onClose={handleLoginClose} />
       <div className='center'>
-        <h1>Quick Parking!</h1>
-        <h2>你的身份是...</h2>
-        <div>
-          <button onClick={click}>
-            See console
-          </button>
+        <h1 className='custom-h1'>Quick Parking</h1>
+        <div className="image-container">
+          <img src="images/home_graphic.png" alt="Home" />
         </div>
-        <nav>
-          <div>
-          <Link to="/carowner">
-            <button type="button">
-            車主
-            </button>
-          </Link>
-          </div>
-          <div>
-          <Link to="/guard">
-            <button type="button">
-              警衛
-            </button>
-          </Link>
-          </div>
-        </nav>
+        <div className="button-group">
+          <h2 className='custom-h2'>你的身份是...</h2>
+          <nav className="nav-group">
+            <div>
+              <Link to="/carowner">
+                <Button variant="contained" sx={buttonStyle}>車 主</Button>
+              </Link>
+            </div>
+            <div>
+              <Button variant="contained" sx={buttonStyle} onClick={handleLogin}>警 衛</Button>
+            </div>
+          </nav>
+        </div>
       </div>
-    );
+    </div>
+  );
 };

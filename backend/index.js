@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 3000;
+const port = 8000;
 
 app.use(cors());
 app.use(express.json());
@@ -152,6 +152,18 @@ async function leave(parking_lot_id, space_id) {
     return usage;
 }
 
+async function get_cars(parking_lot_id) {
+    const query = { parking_lot_id: parking_lot_id };
+    const parking_lot = await parking_lot_coll.findOne(query);
+    
+    const licensePlates = parking_lot.license_plate_nums;
+
+    // Filter out license plates where space_is_available is false
+    const filteredLicensePlates = licensePlates.filter((_, i) => !parking_lot.space_is_available[i]);
+
+    return filteredLicensePlates;
+}
+
 async function find_car(parking_lot_id, plate){
     const query = {parking_lot_id : parking_lot_id};
 	const parking_lot = await parking_lot_coll.findOne(query);
@@ -161,7 +173,8 @@ async function find_car(parking_lot_id, plate){
                 return -1;
             return {
                 space_id : i,
-                used_time : (Date.now() - parking_lot.start_time[i]) / 1000,
+                start_time: time_converter(parking_lot.start_time[i])
+                // used_time : (Date.now() - parking_lot.start_time[i]) / 1000,
             };
         }
     }
@@ -199,7 +212,7 @@ async function space_info(parking_lot_id, space_id, start_day, end_day){
                 usage_list.shift();
         }
         date_str = DateTime.fromMillis(day_start).setZone('Asia/Taipei').toISO().split('T')[0]
-        utilities.push({date : date_str, utility : time_sum / day_delta});
+        utilities.push({date : date_str, utility : Math.round(time_sum / day_delta * 100)});
         day_start = day_end;
         day_end = Math.min(day_end + day_delta, end_time);
     }
@@ -207,40 +220,33 @@ async function space_info(parking_lot_id, space_id, start_day, end_day){
     return {utilities, usage_list : ret};
 }
 
-async function usage_rate(parking_lot_id){
+async function usage_rate(parking_lot_id, date){
     const parking_lot_query = {parking_lot_id : parking_lot_id};
 	const parking_lot = await parking_lot_coll.findOne(parking_lot_query);
-
-    let time = Date.now();
-    //let date = new Date()
-    //let hour  = date.getHours();
+    console.log('parking_lot', parking_lot)
+    const end_time = Math.min(DateTime.now().setZone('Asia/Taipei').toMillis(), DateTime.fromISO(date).setZone('Asia/Taipei').endOf('day').toMillis());
+    const start_time = DateTime.fromISO(date).setZone('Asia/Taipei').startOf('day').toMillis();
+    
+    let time = end_time;
     let hour = parseInt(DateTime.fromMillis(time).setZone('Asia/Taipei').toISO().split('T')[1].split(':')[0])
-
-    let results = Array(7);
-    //7 days
-    for(let i = 0; i < 7; i++){
-        let daily_results = Array(); 
-        //24 hours
-        while(true){
-            const usage_query = {
-                parking_lot_id : parking_lot_id,
-                end_time : { $gt : time } ,
-                start_time : { $lt : time } ,
-            }
-            let n_cars = await usage_coll.countDocuments(usage_query);
-            daily_results.push({ hour : hour, usage_rate : n_cars / parking_lot.space_is_available.length});
-
-            date_str = DateTime.fromMillis(time).setZone('Asia/Taipei').toISO().split('T')[0]
-            time -= 1000 * 3600;
-            if(hour == 0){
-                hour = 23;
-                results[i] = { date : date_str, daily_results };
-                break;
-            }
-            hour--;
+    results = [];
+    while(time >= start_time){
+        const usage_query = {
+            parking_lot_id : parking_lot_id,
+            end_time : { $gt : time } ,
+            start_time : { $lt : time } ,
         }
+        let n_cars = await usage_coll.countDocuments(usage_query);
+        results.push({ hour : hour, usage_rate : Math.round((n_cars / parking_lot.space_is_available.length) * 100)});
+        time -= 1000 * 3600;
+        hour--;
+        console.log('hour', hour)
     }
-    return results;
+    const uniqueResults = Array.from(new Set(results.map(item => item.hour)))
+        .map(hour => {
+            return results.find(item => item.hour === hour);
+        });
+    return uniqueResults;
 }
 
 async function login(id, passwd){
@@ -255,7 +261,7 @@ async function login(id, passwd){
 //-----------------------------------------------------------------------------------
 app.use(
     expressjwt({ secret: config.jwt_secret, algorithms: ["HS256"] }).unless({
-      path: ['/available_space', '/parking_lot_size', '/park', '/leave', '/find_car', '/login'],
+      path: ['/available_space', '/get_cars', '/parking_lot_size', '/park', '/leave', '/find_car', '/login'],
     })
 )
 
@@ -292,7 +298,8 @@ app.get('/available_space', async (req, res) => {
     const parking_lot_id = 0;
     console.log('GET /available_space\n');
     const {space_count, space_list} = await get_available_space(parking_lot_id);
-    res.send({n_available_space: space_count, space_list: space_list});
+    const total_space = await get_total_space(parking_lot_id);
+    res.send({total_space: total_space, n_available_space: space_count, space_list: space_list});
 })
 
 app.get('/parking_lot_size', async (req, res) => {
@@ -300,6 +307,13 @@ app.get('/parking_lot_size', async (req, res) => {
     console.log('GET /parking_lot_size\n');
     const result = await get_total_space(parking_lot_id);
     res.send({size : result});
+})
+
+app.get('/get_cars', async (req, res) => {
+    const parking_lot_id = 0;
+    console.log('GET /get_cars\n');
+    const result = await get_cars(parking_lot_id);
+    res.send({cars : result});
 })
 
 app.post('/park', async (req, res) => {
@@ -338,7 +352,7 @@ app.post('/find_car', async (req, res) => {
     const result = await find_car(parking_lot_id, plate)
     console.log(JSON.stringify(result) + '\n');
     if(result == -1)
-        res.send("not found");
+        res.send({"message": "not found", "space_id": -1});
     else{
         res.send(result); 
 	}
@@ -360,16 +374,17 @@ app.post('/space_info', async(req, res) => {
     res.send(result);
 })
 
-app.get('/usage_rate', async(req, res) => {
+app.post('/usage_rate', async(req, res) => {
     const parking_lot_id = 0;
-    const result = await usage_rate(parking_lot_id);
-    console.log('GET/usage_rate');
+    const date = req.body.date;
+    const result = await usage_rate(parking_lot_id, date);
+    console.log('POST/usage_rate');
     res.send(result);
 })
 
 app.listen(port, async () => {
 	if(config.reset){
-        await database.dropDatabase();
+        // await database.dropDatabase();
         await setup();
     }
     console.log("Server is listening on port " + port + '\n');

@@ -1,0 +1,46 @@
+.carowner-container {
+    padding-left: 2em; /* 左側邊距 */
+    padding-right: 2em; /* 左側邊距 */
+    padding-top: 0.5em;
+    /* max-width: 800px;
+    margin: 0 auto; */
+
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+  }
+ 
+.title {
+  font-size: 2.1em;
+  font-weight: bold;
+  /* margin-left: 0.3em; */
+  /* align-items: baseline; */
+}
+
+p {
+    display: flex;
+    margin-left: auto;
+    font-size: 1.3em;
+    margin-right: 0.8em;
+    align-items: baseline;
+}
+
+.availnum {
+    font-size: 2.1em;
+    font-weight: 900; /* 使用較粗的字體，可以根據需要調整數值 */
+    color: blue;
+    align-items: baseline;
+  }
+
+.posi_num {
+    color: #C56363;
+}
+
+.info {
+    margin-left: 17px;
+    line-height: 1.25;
+}
+
+input:focus {
+  outline: none;
+}
