@@ -1,6 +1,6 @@
 {
     "n_parking_lots": 1,
-    "parking_lot_size": [10],
+    "parking_lot_size": [29],
     "jwt_secret": "guardsecret",
     "guards": [
         {

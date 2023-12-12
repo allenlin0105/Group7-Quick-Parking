@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -15,6 +14,7 @@ const jwt = require('jsonwebtoken')
 
 // Load environment variable
 require('dotenv').config()
+const port = process.env.PORT;
 // Mongo setup
 const { MongoClient } = require('mongodb');
 //const url = 'mongodb://127.0.0.1:27017';
@@ -185,10 +185,10 @@ async function space_info(parking_lot_id, space_id, start_day, end_day){
     usage_list.sort((a,b) => (a.start_time > b.start_time) ? 1 : ((b.start_time > a.start_time) ? -1 : 0))
     let ret = structuredClone(usage_list);
 
-    // calculate utility for the passed week
+    // calculate utility for the given timeframe
     let utilities = Array();
     let day_start = start_time;
-    let day_end = start_time + day_delta;
+    let day_end = Math.min(start_time + day_delta, end_time);
     while(day_start < end_time){
         let time_sum = 0;
         // calculate utility(usage) of a day
@@ -231,6 +231,20 @@ async function usage_rate(parking_lot_id, date){
     return results;
 }
 
+async function abnormal(parking_lot_id){
+    const now = Date.now()
+    const sec = 86400
+    const start_time = now - 1000 * sec
+    usage_query = {
+        parking_lot_id : parking_lot_id,
+        start_time : {$lt : start_time},
+        end_time : {$gt : now},
+    }
+    let results = await usage_coll.find(usage_query)
+    results = results.toArray()
+    return results
+}
+
 async function login(id, passwd){
     const guard = {guard_id : sha256(id), passwd : sha256(passwd)};
     const result = await parking_lot_coll.findOne(guard);
@@ -243,7 +257,7 @@ async function login(id, passwd){
 //-----------------------------------------------------------------------------------
 app.use(
     expressjwt({ secret: config.jwt_secret, algorithms: ["HS256"] }).unless({
-      path: ['/available_space', '/parking_lot_size', '/park', '/leave', '/find_car', '/login'],
+      path: [/^\/api\/user\//],
     })
 )
 
@@ -252,8 +266,8 @@ app.use(function (err, req, res, next) {
       res.status(401).send('invalid token')
     }
 })
-  
-app.post("/login", async (req, res) => {
+
+app.post("/api/user/login", async (req, res) => {
     const id = req.body.id;
     const passwd = req.body.passwd;
     const result = await login(id, passwd);
@@ -276,21 +290,21 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.get('/available_space', async (req, res) => {
+app.get('/api/user/available_space', async (req, res) => {
     const parking_lot_id = 0;
     console.log('GET /available_space\n');
     const {space_count, space_list} = await get_available_space(parking_lot_id);
     res.send({n_available_space: space_count, space_list: space_list});
 })
 
-app.get('/parking_lot_size', async (req, res) => {
+app.get('/api/user/parking_lot_size', async (req, res) => {
     const parking_lot_id = 0;
     console.log('GET /parking_lot_size\n');
     const result = await get_total_space(parking_lot_id);
     res.send({size : result});
 })
 
-app.post('/park', async (req, res) => {
+app.post('/api/user/park', async (req, res) => {
     const parking_lot_id = 0;
     const plate = req.body.plate;
     const space_id = req.body.space_id;
@@ -302,7 +316,7 @@ app.post('/park', async (req, res) => {
     res.send({space_id: id});
 })
 
-app.post('/leave', async (req, res) =>{
+app.post('/api/user/leave', async (req, res) =>{
     const parking_lot_id = 0;
     const space_id = req.body.space_id;
     console.log('POST /leave');
@@ -319,7 +333,7 @@ app.post('/leave', async (req, res) =>{
 	}
 })
 
-app.post('/find_car', async (req, res) => { 
+app.post('/api/user/find_car', async (req, res) => { 
     const parking_lot_id = 0;
     const plate = req.body.plate;
     console.log('POST /find_car');
@@ -332,7 +346,7 @@ app.post('/find_car', async (req, res) => {
 	}
 })
 
-app.post('/space_info', async(req, res) => {
+app.post('/api/guard/space_info', async(req, res) => {
     const parking_lot_id = 0;
     const space_id = req.body.space_id;
     const start_date = req.body.start_date;
@@ -341,19 +355,30 @@ app.post('/space_info', async(req, res) => {
     console.log('POST/space_info');
 
     for(let i = 0; i < result.usage_list.length; i++){
-        result.usage_list[i].start_time = DateTime.fromMillis(result.usage_list[i].start_time).setZone('Asia/Taipei').toISO();
-        result.usage_list[i].end_time = DateTime.fromMillis(result.usage_list[i].end_time).setZone('Asia/Taipei').toISO();
+        result.usage_list[i].start_time = time_converter(result.usage_list[i].start_time);
+        result.usage_list[i].end_time = time_converter(result.usage_list[i].end_time);
     }
     //console.log(result.usage_list)
     res.send(result);
 })
 
-app.post('/usage_rate', async(req, res) => {
+app.post('/api/guard/usage_rate', async(req, res) => {
     const parking_lot_id = 0;
     const date = req.body.date;
     const result = await usage_rate(parking_lot_id, date);
     console.log('POST/usage_rate');
     res.send(result);
+})
+
+app.get('/api/guard/abnormal', async(req, res) => {
+    const parking_lot_id = 0;
+    const result = await abnormal(parking_lot_id)
+    for(let i = 0; i < result.length; i++){
+        result[i].start_time = time_converter(result[i].start_time);
+        result[i].end_time = time_converter(result[i].end_time);
+    }
+    console.log('GET/abnormal')
+    res.send(result)
 })
 
 app.listen(port, async () => {
