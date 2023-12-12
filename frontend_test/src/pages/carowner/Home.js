@@ -59,7 +59,7 @@ export default function Home() {
         else {
             navigate('/carowner/search/',  { state: { 
                 carId: text, 
-                spaceId: data.space_id, 
+                spaceId: data.space_id + 1, 
                 startTime: data.start_time
             }});
         }
