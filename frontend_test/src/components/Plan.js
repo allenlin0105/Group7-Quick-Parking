@@ -73,7 +73,7 @@ export default function Plan(props) {
                 // const availSpaces = await carownerService.getAvailableSpace();
                 const { data } = await getAvailableSpace();
                 setPlan(prevPlan => prevPlan.map(space => {
-                    if (data.space_list.includes(space.id)) {
+                    if (data.space_list.includes(space.id-1)) {
                         return { ...space, occupied: false };
                     }
                     return { ...space, occupied: true };

@@ -8,7 +8,7 @@ export function getSpaceInfo(spaceId, startDate, endDate) {
   const token = localStorage.getItem('token');
   console.log('startDate', startDate, 'endDate', endDate)
   return client.post('/space_info', 
-    { space_id: spaceId, start_date: startDate, end_date: endDate }, 
+    { space_id: spaceId - 1, start_date: startDate, end_date: endDate }, 
     {
       headers: {"authorization": 'Bearer ' + token}
     }
@@ -52,13 +52,13 @@ export function findCar(plate) {
 
 export function leave(space_id) {
   return client.post("/leave", {
-    space_id: space_id
+    space_id: space_id - 1
   });
 }
 
 export function postPark(plate, space_id) {
   return client.post('/park', {
     plate: plate,
-    space_id: space_id,
+    space_id: space_id - 1,
   });
 }

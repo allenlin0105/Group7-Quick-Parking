@@ -2,8 +2,12 @@
     padding-left: 2em; /* 左側邊距 */
     padding-right: 2em; /* 左側邊距 */
     padding-top: 0.5em;
-    max-width: 800px;
-    margin: 0 auto;
+    /* max-width: 800px;
+    margin: 0 auto; */
+
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
   }
  
 .title {

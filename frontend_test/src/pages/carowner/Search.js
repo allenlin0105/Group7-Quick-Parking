@@ -44,9 +44,9 @@ export default function Search() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-        const localTime = new Date();
-        setCurrentTimeStr(format(localTime, 'yyyy/MM/dd HH:mm'));
-        setDuration(calculateDurationInHours(startTime, localTime.toLocaleString()));
+            const localTime = new Date();
+            setCurrentTimeStr(format(localTime, 'yyyy/MM/dd HH:mm'));
+            setDuration(calculateDurationInHours(startTime, localTime.toUTCString()));
         }, 1000);
         setStartTimeStr(format(new Date(startTime), 'yyyy/MM/dd HH:mm'))
         return () => clearInterval(interval);
