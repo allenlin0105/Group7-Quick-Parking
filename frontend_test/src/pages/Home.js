@@ -39,7 +39,7 @@ export default function Home() {
 
 
   return (
-    <div className='home-container home-gradient'>
+    <div className='portal-container home-gradient'>
       <Login open={showLogin} onClose={handleLoginClose} />
       <div className='center'>
         <h1 className='custom-h1'>Quick Parking</h1>

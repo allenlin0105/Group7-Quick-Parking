@@ -36,7 +36,7 @@
     cursor: pointer; /* 將按鈕上的游標設置為指示點擊的樣式 */
   }
 
-  .home-container {
+  .portal-container {
     position: relative;
     height: 100vh;
   }
