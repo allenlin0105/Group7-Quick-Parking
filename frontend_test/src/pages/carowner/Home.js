@@ -36,18 +36,6 @@ export default function Home() {
     }
     setSpaceNumber();
 
-    // 模擬後端數據更新
-    useEffect(() => {
-        // 這裡模擬從後端獲取數據，實際情況需要根據你的後端設置
-        const interval = setInterval(() => {
-            // 假設後端傳回的資訊中有可用位子數
-            const newAvailableSlots = Math.floor(Math.random() * 46); // 假設最大位子數為46
-            setAvailableSlots(newAvailableSlots);
-        }, 30000); // 每30秒更新一次資訊
-
-        return () => clearInterval(interval); // 清除interval
-    }, []);
-
     const navigate = useNavigate();
     const navSearch = async (text) => {
         console.log(text);
@@ -67,6 +55,7 @@ export default function Home() {
 
     return (
         <div className="carowner-container">
+            <div></div>
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <SearchBar searchCallBack={navSearch}/>
             </div>
@@ -74,8 +63,8 @@ export default function Home() {
                 <div>
                     <p>停車場空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p>
                 </div>         
-                <Plan clickable={false}/>
             </div>
+            <Plan clickable={false}/>
         </div>
     )
 };
