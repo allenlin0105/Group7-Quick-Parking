@@ -8,5 +8,5 @@
             "passwd": "1234"
         }
     ],
-    "reset": true
+    "reset": false
 }
