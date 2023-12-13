@@ -32,9 +32,9 @@ export default function Leaving() {
                 console.error("Error:", e);
             }
         }
-        if (!open)
+        if (!open && spaceId === null)
             handleGetCars();
-    }, [open]);
+    }, [open, spaceId]);
     
     useEffect(() => {
         let timeoutId;
@@ -125,12 +125,21 @@ export default function Leaving() {
     const handleOpenDialog = () => {
         setOpen(true);
     }
+
+    const handleCloseDialog = () => {
+        setSpaceId(null);
+        setOpen(false)
+    }
+
     return (
         <div className="home-container">
             {spaceId ? (
                 <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <h1 className='title'><span style={{color: '#3d995f'}}>{carId}</span> 停在車位 <span className="posi_num">{spaceId}</span> </h1>
+                    <Button variant="contained" onClick={handleCloseDialog} sx={{...buttonStyle, fontWeight: 'bold'}}>
+                        取消
+                    </Button>
                     <Button variant="contained" onClick={handleOpenDialog} sx={{...buttonStyle, fontWeight: 'bold'}}>
                         離場
                     </Button>
@@ -150,7 +159,7 @@ export default function Leaving() {
                     <Plan clickable={false} locatedSpaceId={null}/>
                 </div>
             )}
-            <Dialog open={open} onClose={() => setOpen(false)} 
+            <Dialog open={open} onClose={handleCloseDialog} 
                 PaperProps={{
                     style: { 
                     borderRadius: '10px',
@@ -164,7 +173,7 @@ export default function Leaving() {
                     <span className="reg-string">
                         {`確定離場 `}
                     </span>
-                    <span className="reg-string reg-carId">
+                    <span className="reg-string" style={{color: '#3d995f'}}>
                         {carId}
                     </span>
                 </DialogTitle>
@@ -186,7 +195,7 @@ export default function Leaving() {
                     </div>
                 </DialogContent>
                 <DialogActions  sx={{fontSize: "18px"}}>
-                    <Button onClick={() => setOpen(false)} sx={buttonStyle}>取消</Button>
+                    <Button onClick={handleCloseDialog} sx={buttonStyle}>取消</Button>
                     <Button onClick={handleCheckLeave} autoFocus  sx={buttonStyle}>
                         確認
                     </Button>
