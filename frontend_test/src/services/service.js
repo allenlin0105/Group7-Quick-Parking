@@ -48,19 +48,19 @@ export function getCars() {
 
 export function findCar(plate) {
   return client.post("/find_car", {
-    plate: plate
+    "plate": plate
   });
 }
 
 export function leave(space_id) {
   return client.post("/leave", {
-    space_id: space_id - 1
+    "space_id": space_id - 1
   });
 }
 
 export function postPark(plate, space_id) {
   return client.post('/park', {
-    plate: plate,
-    space_id: space_id - 1,
+    "plate": plate,
+    "space_id": space_id - 1,
   });
 }
