@@ -47,27 +47,20 @@ export function getCars() {
 }
 
 export function findCar(plate) {
-  return client.post("/find_car", 
-    { plate: plate },
-  );
+  return client.post("/find_car", {
+    plate: plate
+  });
 }
 
 export function leave(space_id) {
-  const token = localStorage.getItem('token');
-  return client.post("/leave", 
-    { space_id: space_id - 1},
-    {
-      headers: {"authorization": 'Bearer ' + token}
-    }
-  );
+  return client.post("/leave", {
+    space_id: space_id - 1
+  });
 }
 
 export function postPark(plate, space_id) {
-  const token = localStorage.getItem('token');
-  return client.post('/park', 
-  { plate: plate, space_id: space_id - 1, },
-  {
-    headers: {"authorization": 'Bearer ' + token}
-  }
-  );
+  return client.post('/park', {
+    plate: plate,
+    space_id: space_id - 1,
+  });
 }
