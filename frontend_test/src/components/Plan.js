@@ -57,7 +57,7 @@ export default function Plan(props) {
 
         // Check if autoPark is set and it's the initial page load, then start the interval
         if (autoPark && !open) {
-            intervalId = setInterval(randomClickAvailableSpace, 3000); // Random click every 2 seconds
+            intervalId = setInterval(randomClickAvailableSpace, 2000); // Random click every 2 seconds
         }
 
         // Cleanup the interval when the component unmounts

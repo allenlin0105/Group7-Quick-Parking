@@ -133,7 +133,7 @@ export default function Login({ open, onClose, onLogin }) {
       {
       showMenu ? 
         <div style={{ display: 'flex', gap: 10}}>
-          {/* <Button 
+          <Button 
               onClick={goToRegisterPage}
               sx={buttonStyle}
           >
@@ -146,7 +146,7 @@ export default function Login({ open, onClose, onLogin }) {
           >
               離場系統{" "}
               <FaArrowRight style={{marginTop: -3}}/>
-          </Button> */}
+          </Button>
           <Button 
               onClick={goToManagePage}
               sx={buttonStyle}

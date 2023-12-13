@@ -1,33 +1,14 @@
-import React, { useState, useEffect }  from "react"
+import React, { useState }  from "react"
 import "./carowner.css"
 import Plan from "../../components/Plan";
 import { getAvailalbeSpace } from "../../services/service";
-import Button from '@mui/material/Button';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { findCar } from '../../services/service';
 import SearchBar from "../../components/SearchBar";
 
 export default function Home() {
     const [availableSlots, setAvailableSlots] = useState(46); // 初始可停車位數量
     const [totalSlots, setTotalSlots] = useState(0);
-
-    // useEffect(() => {
-    //     // 使用fetch向後端發送GET請求
-    //     fetch('/api/getAvailableSlots') // 假設後端API端點為/api/getAvailableSlots
-    //         .then((response) => {
-    //             if (!response.ok) {
-    //                 throw new Error('Network response was not ok');
-    //             }
-    //             return response.json(); // 解析JSON格式的回應
-    //         })
-    //     .then((data) => {
-    //         // 從後端獲取到的位置數據，假設後端回傳的資料格式為 { availableSlots: 20 }
-    //         setAvailableSlots(data.availableSlots);
-    //     })
-    //     .catch((error) => {
-    //         console.error('There was a problem with the fetch operation:', error);
-    //     });
-    // }, []); // 空依賴數組表示只在組件首次渲染時發送請求
 
     const setSpaceNumber = async() => {
         const { data } = await getAvailalbeSpace();
