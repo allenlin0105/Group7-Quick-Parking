@@ -5,7 +5,7 @@
 3. Run `npm install` to install required packages
 4. Run `node index.js` to listen on port 3000
 
-## test
+## APIs
 available_space
 ```sh
 curl localhost:3000/available_space
@@ -44,4 +44,9 @@ curl -H "Content-Type: application/json" -H "authorization: Bearer ${token}" -X 
 login
 ```sh
 curl -H "Content-Type: application/json" -X POST -d '{"id":"xxx", "passwd":"xxx"}' localhost:3000/login
+```
+
+## Run test
+```sh
+npm test
 ```

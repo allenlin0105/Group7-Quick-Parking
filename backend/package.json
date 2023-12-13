@@ -1,6 +1,10 @@
 {
   "name": "quick-parking-backend",
   "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose --coverage --coverageReporters='text-summary'",
+    "start": "node index.js"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "16.3.1",
@@ -10,5 +14,12 @@
     "jsonwebtoken": "9.0.2",
     "luxon": "3.4.4",
     "mongodb": "^6.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^29.7.0",
+    "superagent": "^8.1.2",
+    "supertest": "^6.3.3"
   }
 }
