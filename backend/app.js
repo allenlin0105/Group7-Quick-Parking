@@ -157,10 +157,10 @@ async function space_info(parking_lot_id, space_id, start_day, end_day){
     usage_list.sort((a,b) => (a.start_time > b.start_time) ? 1 : ((b.start_time > a.start_time) ? -1 : 0))
     let ret = structuredClone(usage_list);
 
-    // calculate utility for the passed week
+    // calculate utility for the given timeframe
     let utilities = Array();
     let day_start = start_time;
-    let day_end = start_time + day_delta;
+    let day_end = Math.min(start_time + day_delta, end_time);
     while(day_start < end_time){
         let time_sum = 0;
         // calculate utility(usage) of a day
