@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  selector:
+    matchLabels:
+      app: quick-parking
+      tier: backend
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: quick-parking
+        tier: backend
+        track: stable
+    spec:
+      containers:
+        - name: backend
+          image: gcr.io/PROJECT_ID/IMAGE:TAG
+          resources:
+          # You must specify requests for CPU to autoscale
+          # based on CPU utilization
+            requests:
+              cpu: "150m"
+          ports:
+            - name: http
+              containerPort: 3000

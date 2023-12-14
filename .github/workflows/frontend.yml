@@ -1,0 +1,68 @@
+name: Build and deploy frontend to Azure Kubernetes Service
+
+on:
+  push:
+    branches: 
+      - front-cd-test
+    paths:
+      - '**/frontend_test/**'
+      - '**/frontend.yml'
+
+env:
+  IMAGE_NAME: frontend
+  SOURCE_PATH: frontend_test
+  CLUSTER_NAME: QuickParkingCluster
+  DEPLOYMENT_NAME: frontend-deployment
+  REACT_APP_API_URL: http://20.239.121.201/api/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Log into Azure
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true
+
+    - name: Build image on ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        touch ${{ env.SOURCE_PATH }}/.env
+        echo REACT_APP_API_URL=${{ env.REACT_APP_API_URL }} >> ${{ env.SOURCE_PATH }}/.env
+        docker build ${{ env.SOURCE_PATH }} \
+          --tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+
+    - name: Setup kubelogin
+      uses: azure/use-kubelogin@v1
+      with:
+        kubelogin-version: 'v0.0.29'
+
+    - name: Set AKS context
+      id: set-context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: ${{ env.CLUSTER_NAME }}
+        admin: 'false'
+        use-kubelogin: 'true'
+
+    - name: Deploy image using Kustomize
+      run: |
+        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+        cd $SOURCE_PATH
+        kustomize edit set image REGISTRY/IMAGE:TAG=${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        kustomize build . | kubectl apply -f -
+        kubectl rollout status deployment ${{ env.DEPLOYMENT_NAME }}
+        kubectl get services -o wide
