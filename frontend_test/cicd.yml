@@ -37,7 +37,9 @@ spec:
           # You must specify requests for CPU to autoscale
           # based on CPU utilization
             requests:
-              cpu: "150m"
+              cpu: "2"
+            limits:
+              cpu: "2"
           lifecycle:
             preStop:
               exec:
