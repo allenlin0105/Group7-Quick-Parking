@@ -2,7 +2,7 @@
   "name": "quick-parking-backend",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose --coverage --coverageReporters='text-summary'",
+    "test": "jest --coverage --detectOpenHandles",
     "start": "node index.js"
   },
   "dependencies": {
