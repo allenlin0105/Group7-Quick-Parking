@@ -34,9 +34,6 @@ export default function Plan(props) {
                 const canvasTopPosition = calculateCanvasPosition();
                 const viewportHeight = window.innerHeight;
                 const canvasHeight = viewportHeight - canvasTopPosition;
-                console.log(canvasTopPosition);
-                console.log(viewportHeight);
-                console.log(canvasHeight);
         
                 const container = containerRef.current;
                 if (container) {
@@ -71,7 +68,7 @@ export default function Plan(props) {
             const rect = canvas.getBoundingClientRect();
             const simulatedX = randomSpace.x + rect.left;
             const simulatedY = randomSpace.y + rect.top;
-            console.log(simulatedX, simulatedY);
+            // console.log(simulatedX, simulatedY);
     
             // Dispatch a click event to the canvas
             const simulatedEvent = new MouseEvent('click', {
@@ -266,8 +263,7 @@ export default function Plan(props) {
             });
             if (space === undefined)
                 return;
-            console.log(space.id);
-            // todo: maybe navigate to history
+            // console.log(space.id);
             navigate('/guard/history', { state: { spaceId: space.id } })
         } else {
             const space = plan.find(space => {

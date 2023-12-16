@@ -135,19 +135,19 @@ async function leave(parking_lot_id, space_id) {
     return usage;
 }
 
-// async function get_cars(parking_lot_id) {
-//     const query = {
-//         parking_lot_id: parking_lot_id
-//     };
-//     const parking_lot = await parking_lot_coll.findOne(query);
+async function get_cars(parking_lot_id) {
+    const query = {
+        parking_lot_id: parking_lot_id
+    };
+    const parking_lot = await parking_lot_coll.findOne(query);
 
-//     const licensePlates = parking_lot.license_plate_nums;
+    const licensePlates = parking_lot.license_plate_nums;
 
-//     // Filter out license plates where space_is_available is false
-//     const filteredLicensePlates = licensePlates.filter((_, i) => !parking_lot.space_is_available[i]);
+    // Filter out license plates where space_is_available is false
+    const filteredLicensePlates = licensePlates.filter((_, i) => !parking_lot.space_is_available[i]);
 
-//     return filteredLicensePlates;
-// }
+    return filteredLicensePlates;
+}
 
 async function find_car(parking_lot_id, plate) {
     const query = {
@@ -271,7 +271,7 @@ app.use(
         secret: config.jwt_secret,
         algorithms: ["HS256"]
     }).unless({
-        path: ['/available_space', '/get_cars', '/parking_lot_size', '/park', '/leave', '/find_car', '/login'],
+        path: ['/available_space', '/parking_lot_size', '/park', '/leave', '/find_car', '/login'],
     })
 )
 
@@ -328,14 +328,14 @@ app.get('/available_space', async (req, res) => {
 //     res.send({size : result});
 // })
 
-// app.get('/get_cars', async (req, res) => {
-//     const parking_lot_id = 0;
-//     console.log('GET /get_cars\n');
-//     const result = await get_cars(parking_lot_id);
-//     res.send({
-//         cars: result
-//     });
-// })
+app.get('/get_cars', async (req, res) => {
+    const parking_lot_id = 0;
+    console.log('GET /get_cars\n');
+    const result = await get_cars(parking_lot_id);
+    res.send({
+        cars: result
+    });
+})
 
 app.post('/park', async (req, res) => {
     const parking_lot_id = 0;
