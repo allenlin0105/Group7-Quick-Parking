@@ -13,6 +13,7 @@ export default function Plan(props) {
         clickable = true,
         autoPark = false,
     } = props;
+    const containerRef = useRef(null);
     const initPlan = editable ? [] : planData;
     const [plan, setPlan] = useState(initPlan);
     const [selectedSpacdId, setSelectedSpacdId] = useState(null);
@@ -23,7 +24,35 @@ export default function Plan(props) {
     const canvasRef = useRef(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false); // https://mui.com/material-ui/react-dialog/#form-dialogs
-
+    const calculateCanvasPosition = () => {
+        const canvas = canvasRef.current;
+        return canvas ? canvas.getBoundingClientRect().top : 0;
+    };
+    useEffect(() => {
+        if (!guard) {
+            const setCanvasHeight = () => {
+                const canvasTopPosition = calculateCanvasPosition();
+                const viewportHeight = window.innerHeight;
+                const canvasHeight = viewportHeight - canvasTopPosition;
+                console.log(canvasTopPosition);
+                console.log(viewportHeight);
+                console.log(canvasHeight);
+        
+                const container = containerRef.current;
+                if (container) {
+                    container.style.height = `${canvasHeight}px`;
+                }
+            };
+        
+            setCanvasHeight();
+            window.addEventListener('resize', setCanvasHeight);
+        
+            return () => {
+                window.removeEventListener('resize', setCanvasHeight);
+            };
+        }
+    }, [guard]);
+    
     useEffect(() => {
         let intervalId;
 
@@ -171,6 +200,18 @@ export default function Plan(props) {
                                 ctx.drawImage(locImage, (-w)/2, -(h), w, h);
                                 ctx.restore();
                             }
+                
+                            // Scroll the window or container to the located space
+                            let scrollX = space.x - window.innerWidth / 2;
+                            // Ensure the scroll position is within the bounds
+                            const containerRect = containerRef.current.getBoundingClientRect();
+                            scrollX = Math.max(0, scrollX);
+                            scrollX = Math.min(containerRef.current.scrollWidth - containerRect.width, scrollX);
+                            containerRef.current.scrollTo({
+                                left: scrollX,
+                                top: space.y - 60,
+                                behavior: 'smooth'
+                            });
                         }
                     });
                 }
@@ -312,7 +353,7 @@ export default function Plan(props) {
     };
 
     return (
-        <div className="centered-div" style={{ textAlign: 'center' }}>
+        <div className="centered-div" ref={containerRef} style={{ textAlign: 'center' }}>
             <PlanDialog 
                 open={open} 
                 onClose={handleClose}
