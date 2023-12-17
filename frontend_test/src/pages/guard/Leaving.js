@@ -76,12 +76,23 @@ export default function Leaving() {
 
 
     useEffect(() => {
-        const interval = setInterval(() => {
+        // Function to update the time and duration
+        const updateTimeAndDuration = () => {
             const localTime = new Date();
             setCurrentTimeStr(format(localTime, 'yyyy/MM/dd HH:mm'));
             setDuration(calculateDurationInHours(startTime, localTime.toUTCString()));
-        }, 1000);
-        setStartTimeStr(format(new Date(startTime), 'yyyy/MM/dd HH:mm'))
+        };
+    
+        // Call the function immediately to update time and duration
+        updateTimeAndDuration();
+    
+        // Set up the interval for subsequent updates
+        const interval = setInterval(updateTimeAndDuration, 1000);
+    
+        // Format and set the start time string
+        setStartTimeStr(format(new Date(startTime), 'yyyy/MM/dd HH:mm'));
+    
+        // Clear the interval on component unmount
         return () => clearInterval(interval);
     }, [startTime])
     
