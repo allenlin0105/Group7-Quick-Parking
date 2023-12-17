@@ -13,6 +13,7 @@ export default function Plan(props) {
         clickable = true,
         autoPark = false,
     } = props;
+    const containerRef = useRef(null);
     const initPlan = editable ? [] : planData;
     const [plan, setPlan] = useState(initPlan);
     const [selectedSpacdId, setSelectedSpacdId] = useState(null);
@@ -23,7 +24,32 @@ export default function Plan(props) {
     const canvasRef = useRef(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false); // https://mui.com/material-ui/react-dialog/#form-dialogs
-
+    const calculateCanvasPosition = () => {
+        const canvas = canvasRef.current;
+        return canvas ? canvas.getBoundingClientRect().top : 0;
+    };
+    useEffect(() => {
+        if (!guard) {
+            const setCanvasHeight = () => {
+                const canvasTopPosition = calculateCanvasPosition();
+                const viewportHeight = window.innerHeight;
+                const canvasHeight = viewportHeight - canvasTopPosition;
+        
+                const container = containerRef.current;
+                if (container) {
+                    container.style.height = `${canvasHeight}px`;
+                }
+            };
+        
+            setCanvasHeight();
+            window.addEventListener('resize', setCanvasHeight);
+        
+            return () => {
+                window.removeEventListener('resize', setCanvasHeight);
+            };
+        }
+    }, [guard]);
+    
     useEffect(() => {
         let intervalId;
 
@@ -42,7 +68,7 @@ export default function Plan(props) {
             const rect = canvas.getBoundingClientRect();
             const simulatedX = randomSpace.x + rect.left;
             const simulatedY = randomSpace.y + rect.top;
-            console.log(simulatedX, simulatedY);
+            // console.log(simulatedX, simulatedY);
     
             // Dispatch a click event to the canvas
             const simulatedEvent = new MouseEvent('click', {
@@ -146,6 +172,29 @@ export default function Plan(props) {
                                     ctx.drawImage(carImage, -space.w / 2, -space.h / 2, space.w, space.h);
                                 }
                                 ctx.restore();
+                                if (locatedSpaceId && space.id === locatedSpaceId) {
+                                    const locImage = new Image();
+                                    locImage.src = '/images/location.png';
+                                    locImage.onload = () => {
+                                        ctx.save();
+                                        ctx.translate(space.x, space.y);
+                                        const sz = 1.1, w = 37.21 / sz, h = 54.59 / sz;
+                                        ctx.drawImage(locImage, (-w)/2, -(h), w, h);
+                                        ctx.restore();
+                                    }
+                        
+                                    // Scroll the window or container to the located space
+                                    let scrollX = space.x - window.innerWidth / 2;
+                                    // Ensure the scroll position is within the bounds
+                                    const containerRect = containerRef.current.getBoundingClientRect();
+                                    scrollX = Math.max(0, scrollX);
+                                    scrollX = Math.min(containerRef.current.scrollWidth - containerRect.width, scrollX);
+                                    containerRef.current.scrollTo({
+                                        left: scrollX,
+                                        top: space.y - 60,
+                                        behavior: 'smooth'
+                                    });
+                                }
                             };
                         } else {
                             // Draw a placeholder or empty space if not occupied
@@ -160,17 +209,6 @@ export default function Plan(props) {
                             ctx.textBaseline = 'middle'; // Center text vertically
                             ctx.fillText(space.id.toString().padStart(2, '0'), 0, 0); // Draw text at the center of the rectangle
                             ctx.restore();
-                        }
-                        if (locatedSpaceId && space.id === locatedSpaceId) {
-                            const locImage = new Image();
-                            locImage.src = '/images/location.png';
-                            locImage.onload = () => {
-                                ctx.save();
-                                ctx.translate(space.x, space.y);
-                                const sz = 1.1, w = 37.21 / sz, h = 54.59 / sz;
-                                ctx.drawImage(locImage, (-w)/2, -(h), w, h);
-                                ctx.restore();
-                            }
                         }
                     });
                 }
@@ -225,8 +263,7 @@ export default function Plan(props) {
             });
             if (space === undefined)
                 return;
-            console.log(space.id);
-            // todo: maybe navigate to history
+            // console.log(space.id);
             navigate('/guard/history', { state: { spaceId: space.id } })
         } else {
             const space = plan.find(space => {
@@ -312,7 +349,7 @@ export default function Plan(props) {
     };
 
     return (
-        <div className="centered-div" style={{ textAlign: 'center' }}>
+        <div className="centered-div" ref={containerRef} style={{ textAlign: 'center' }}>
             <PlanDialog 
                 open={open} 
                 onClose={handleClose}

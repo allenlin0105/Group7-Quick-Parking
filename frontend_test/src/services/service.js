@@ -43,7 +43,11 @@ export function getAvailableSpace() {
 }
 
 export function getCars() {
-  return client.get("/get_cars");
+  const token = localStorage.getItem('token');
+  return client.get("/get_cars", 
+  {
+    headers: {"authorization": 'Bearer ' + token}
+  });
 }
 
 export function findCar(plate) {
