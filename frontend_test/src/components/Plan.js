@@ -209,13 +209,36 @@ export default function Plan(props) {
                             ctx.textBaseline = 'middle'; // Center text vertically
                             ctx.fillText(space.id.toString().padStart(2, '0'), 0, 0); // Draw text at the center of the rectangle
                             ctx.restore();
+                            if (space.id === clickedSpacdId) {
+                                const locImage = new Image();
+                                locImage.src = '/images/location.png';
+                                locImage.onload = () => {
+                                    ctx.save();
+                                    ctx.translate(space.x, space.y);
+                                    const sz = 1.1, w = 37.21 / sz, h = 54.59 / sz;
+                                    ctx.drawImage(locImage, (-w)/2, -(h), w, h);
+                                    ctx.restore();
+                                }
+                    
+                                // Scroll the window or container to the located space
+                                let scrollX = space.x - window.innerWidth / 2;
+                                // Ensure the scroll position is within the bounds
+                                const containerRect = containerRef.current.getBoundingClientRect();
+                                scrollX = Math.max(0, scrollX);
+                                scrollX = Math.min(containerRef.current.scrollWidth - containerRect.width, scrollX);
+                                containerRef.current.scrollTo({
+                                    left: scrollX,
+                                    top: space.y - 60,
+                                    behavior: 'smooth'
+                                });
+                            }
                         }
                     });
                 }
             };
         };
         drawCanvas();
-    }, [plan, mouse, hoverSpacdId, selectedSpacdId, isEditable, guard, locatedSpaceId]);
+    }, [plan, mouse, hoverSpacdId, selectedSpacdId, isEditable, guard, locatedSpaceId, clickedSpacdId]);
 
     const isMouseOverspace = (x, y, space) => {
         // Translate mouse coordinates to the space's coordinate system
@@ -354,8 +377,6 @@ export default function Plan(props) {
                 open={open} 
                 onClose={handleClose}
                 spaceId={clickedSpacdId}
-                contentText="To subscribe to this website, please enter your email address here. We will send updates occasionally."
-                textFieldLabel="Email Address"
             />
             <canvas
                 ref={canvasRef}
