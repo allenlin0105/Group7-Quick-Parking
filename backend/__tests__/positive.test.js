@@ -156,3 +156,15 @@ describe("POST /space_info", () => {
     expect(response.body.usage_list).toBeDefined();
   });
 });
+
+describe("GET /get_cars", () => {
+  test("should return parking cars", async () => {
+
+    const response = await request(app)
+      .get("/get_cars", {})
+      .set('authorization', `Bearer ${token}`)
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.cars).toBeDefined();
+  });
+});
