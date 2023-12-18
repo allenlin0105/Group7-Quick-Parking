@@ -35,7 +35,7 @@ export default function Plan(props) {
             try {
                 // Replace this with your actual logic to get warning list
                 const fetchedWarnings = await getWarnings(); // This is a placeholder function
-                console.log(fetchedWarnings);
+                // console.log(fetchedWarnings);
                 if (fetchedWarnings.data && fetchedWarnings.data.length !== 0) {
                     setCLickedSpacdId(Math.min(...fetchedWarnings.data)-1);
                 }
@@ -166,7 +166,7 @@ export default function Plan(props) {
                     });
                 } else {
                     plan.forEach(space=> {
-                        console.log(space)
+                        // console.log(space)
                         // Check if the space is occupied
                         if (space.occupied) {
                             // Draw a car image if space is occupied
@@ -194,18 +194,6 @@ export default function Plan(props) {
                                     ctx.drawImage(carImage, -space.w / 2, -space.h / 2, space.w, space.h);
                                 }
                                 ctx.restore();
-                                // if (guard && warningSet.has(space.id-1)) {
-                                // todo: rotate the warning correctly
-                                //     const warnImage = new Image();
-                                //     warnImage.src = '/images/warning.png';
-                                //     warnImage.onload = () => {
-                                //         ctx.save();
-                                //         ctx.translate(space.x, space.y);
-                                //         ctx.rotate(space.r * Math.PI / 180);
-                                //         ctx.drawImage(warnImage, -13, space.h / 2 + 10);
-                                //         ctx.restore();
-                                //     }
-                                // }
                                 if ((locatedSpaceId && space.id === locatedSpaceId) ||
                                     (guard && space.id === clickedSpacdId)) {
                                     if (!guard) {
@@ -225,7 +213,6 @@ export default function Plan(props) {
                                     const containerRect = containerRef.current.getBoundingClientRect();
                                     scrollX = Math.max(0, scrollX);
                                     scrollX = Math.min(containerRef.current.scrollWidth - containerRect.width, scrollX);
-                                    console.log(scrollX, space.y);
                                     containerRef.current.scrollTo({
                                         left: scrollX,
                                         top: space.y - 60,
