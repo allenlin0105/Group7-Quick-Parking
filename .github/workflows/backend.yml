@@ -15,7 +15,25 @@ env:
   DEPLOYMENT_NAME: backend-deployment
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '17.x'
+    
+    - name:
+      run: |
+        npm ci
+        npm run build --if-present
+        npm test
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
