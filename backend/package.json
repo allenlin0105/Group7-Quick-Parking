@@ -2,7 +2,7 @@
   "name": "quick-parking-backend",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --forceExit --detectOpenHandles",
+    "test": "jest --coverage --forceExit --detectOpenHandles --silent --verbose",
     "start": "node index.js"
   },
   "dependencies": {

@@ -47,7 +47,7 @@ describe("POST /login", () => {
 });
 
 describe("POST /usage_rate", () => {
-  test("should success", async () => {
+  test("should return success", async () => {
     const response = await request(app)
       .post("/usage_rate", {})
       .set('authorization', `Bearer ${token}`)
@@ -116,8 +116,7 @@ describe("POST /leave", () => {
   });
 });
 
-// Car already left but try to find
-describe("POST /find_car", () => {
+describe("POST /find_car (car already left)", () => {
   test("should return not found", async () => {
     const response = await request(app)
       .post("/find_car", {})
@@ -166,5 +165,16 @@ describe("GET /get_cars", () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.body.cars).toBeDefined();
+  });
+});
+
+describe("GET /abnormal", () => {
+  test("should return success", async () => {
+
+    const response = await request(app)
+      .get("/abnormal", {})
+      .set('authorization', `Bearer ${token}`)
+
+    expect(response.statusCode).toBe(200);
   });
 });
