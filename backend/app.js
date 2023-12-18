@@ -255,7 +255,7 @@ async function usage_rate(parking_lot_id, date) {
 
 async function abnormal(parking_lot_id){
     const now = Date.now()
-    const sec = 86400 * 2
+    const sec = 86400 / 2
     const start_time = now - 1000 * sec
     usage_query = {
         parking_lot_id : parking_lot_id,
