@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react'
 import App from '../App'
 
-test('routes to caronwer page', async () => {
+it('routes to caronwer page', async () => {
     render(<App />)
     await act(async () => {
         fireEvent.click(screen.getByText('車 主'))

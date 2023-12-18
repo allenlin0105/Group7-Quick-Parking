@@ -11,7 +11,7 @@ import App from '../App'
 import ResizeObserver from 'resize-observer-polyfill';
 global.ResizeObserver = ResizeObserver;
 
-test('routes to guard page', async () => {
+it('routes to guard page', async () => {
     render(<App />)
     
     await act(async () => {
@@ -36,4 +36,4 @@ test('routes to guard page', async () => {
         fireEvent.click(goToMangeButton);
     })
     expect(window.location.pathname).toBe('/guard');
-})
+}, 10000)

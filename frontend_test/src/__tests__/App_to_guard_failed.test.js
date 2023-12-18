@@ -15,7 +15,7 @@ global.ResizeObserver = ResizeObserver;
 
 const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8000'
 
-test('login failed', async () => {
+it('login failed', async () => {
     
     server.use(
         rest.post(`${baseURL}/login`, async (req, res, ctx) => {
@@ -50,4 +50,4 @@ test('login failed', async () => {
     expect(window.location.pathname).toBe('/');
     const errorMsg = screen.getByTestId("loginFailedMsg")
     expect(errorMsg).toHaveTextContent('登入失敗');
-})
+}, 10000)

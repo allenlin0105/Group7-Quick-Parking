@@ -31,7 +31,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --coverage --watchAll=false --transformIgnorePatterns 'node_modules/(?!my-library-dir)/'",
+    "test": "react-scripts test --coverage --watchAll=false --silent --verbose --transformIgnorePatterns 'node_modules/(?!my-library-dir)/'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
