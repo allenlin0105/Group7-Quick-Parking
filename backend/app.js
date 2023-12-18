@@ -253,6 +253,20 @@ async function usage_rate(parking_lot_id, date) {
     return uniqueResults;
 }
 
+async function abnormal(parking_lot_id){
+    const now = Date.now()
+    const sec = 86400 * 2
+    const start_time = now - 1000 * sec
+    usage_query = {
+        parking_lot_id : parking_lot_id,
+        start_time : {$lt : start_time},
+        end_time : {$gt : now},
+    }
+    let results = await usage_coll.find(usage_query)
+    results = results.toArray()
+    return results
+}
+
 async function login(id, passwd) {
     const guard = {
         guard_id: sha256(id),
@@ -408,6 +422,13 @@ app.post('/usage_rate', async (req, res) => {
     const result = await usage_rate(parking_lot_id, date);
     console.log('POST/usage_rate');
     res.send(result);
+})
+
+app.get('/abnormal', async(req, res) => {
+    const parking_lot_id = 0;
+    const result = await abnormal(parking_lot_id)
+    console.log('GET/abnormal')
+    res.send(result.map(space => space.space_id))
 })
 
 module.exports = app;
