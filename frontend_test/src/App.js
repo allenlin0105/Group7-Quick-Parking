@@ -12,32 +12,35 @@ import GuardParking from "./pages/guard/Parking"
 import GuardLeaving from "./pages/guard/Leaving"
 import ProtectedRoute from './components/ProtectedRoutes';
 import CarNotFound from './pages/carowner/CarNotFound'
+import { BrowserRouter } from 'react-router-dom';
 
 export default function App() {
   // define all the Route(s)s here, nested "Routes"s lead to conflict error.
   return (
     <>
-      <Routes>
-        <Route index element={<Home/>} />
-        <Route path="guard" element={
-          <ProtectedRoute>
-            <GuardNav />
-          </ProtectedRoute>
-          }>
-          <Route index element={<GuardHome/> } />
-          <Route path='history' element={<GuardHistory/>} />
-          <Route path='parking' element={<GuardParking/>} />
-          <Route path='leaving' element={<GuardLeaving/>} />
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<Home/>} />
+          <Route path="guard" element={
+            <ProtectedRoute>
+              <GuardNav />
+            </ProtectedRoute>
+            }>
+            <Route index element={<GuardHome/> } />
+            <Route path='history' element={<GuardHistory/>} />
+            <Route path='parking' element={<GuardParking/>} />
+            <Route path='leaving' element={<GuardLeaving/>} />
+            <Route path='*' element={<Navigate to="/" replace />} />
+          </Route>
+          <Route path="carowner" element={<CarOwnerNav />}>
+            <Route index element={<CarOwnerHome />} />
+            <Route path="search" element={<CarOwnerSearch />} />
+            <Route path="not_found" element={<CarNotFound />} />
+            <Route path='*' element={<Navigate to="/" replace />} />
+          </Route>
           <Route path='*' element={<Navigate to="/" replace />} />
-        </Route>
-        <Route path="carowner" element={<CarOwnerNav />}>
-          <Route index element={<CarOwnerHome />} />
-          <Route path="search" element={<CarOwnerSearch />} />
-          <Route path="not_found" element={<CarNotFound />} />
-          <Route path='*' element={<Navigate to="/" replace />} />
-        </Route>
-        <Route path='*' element={<Navigate to="/" replace />} />
-      </Routes>
+        </Routes>
+      </BrowserRouter>
     </>
   );
 };

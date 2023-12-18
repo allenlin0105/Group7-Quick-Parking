@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowRight } from "react-icons/fa";
 
-export default function Login({ open, onClose, onLogin }) {
+export default function Login({ open, onClose }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showError, setShowError] = useState(false);
@@ -99,6 +99,7 @@ export default function Login({ open, onClose, onLogin }) {
       <div className="dialog-row">
          <span>帳號：</span>
          <TextField
+           data-testid="usernameInput"
            placeholder="請輸入管理員帳號"
            value={username}
            onChange={(e) => setUsername(e.target.value)}
@@ -113,6 +114,7 @@ export default function Login({ open, onClose, onLogin }) {
       <div className="dialog-row">
         <span>密碼：</span>
         <TextField
+          data-testid="passwordInput"
           type="password"
           placeholder="請輸入密碼"
           value={password}
@@ -126,7 +128,7 @@ export default function Login({ open, onClose, onLogin }) {
         />
       </div>
       {
-        showError && <span style={{color: 'red'}}>登入失敗，請檢查帳號密碼</span>
+        showError && <span data-testid="loginFailedMsg" style={{color: 'red'}}>登入失敗，請檢查帳號密碼</span>
       }
     </DialogContent>
     <DialogActions sx={{fontSize: "18px"}}>

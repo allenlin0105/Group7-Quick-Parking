@@ -70,7 +70,7 @@ export default function Home() {
                 <div className="header">
                     <h1 className='title'>停車場綜覽</h1>
                     <div>
-                        <p>目前空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p>
+                        <p>目前空位： <span className="availnum" data-testid="availSpace">{availableSlots}</span> &nbsp;/&nbsp; <span data-testid="totalSpace">{totalSlots}</span></p>
                     </div>
                 </div>
                 {/* 車位利用率折線圖 */}       

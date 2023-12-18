@@ -166,7 +166,7 @@ export default function Plan(props) {
                     });
                 } else {
                     plan.forEach(space=> {
-                        // console.log(space)
+                        console.log(space)
                         // Check if the space is occupied
                         if (space.occupied) {
                             // Draw a car image if space is occupied
