@@ -74,7 +74,7 @@ global.Image = class {
     src = '';
 };
 
-it('shows a car image only for occupied spaces', async () => {
+it('shows car images on occupied spaces', async () => {
     // Define ctx in a broader scope
     let ctx;
 

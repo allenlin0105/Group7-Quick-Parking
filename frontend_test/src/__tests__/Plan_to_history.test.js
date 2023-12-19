@@ -40,7 +40,7 @@ it('routes to /guard/history when a space is clicked', async () => {
   // expect(window.location.pathname).toBe('/guard/history');
 });
 
-it('not route to /guard/history when a space is unclickable', async () => {
+it('not route to /guard/history when spaces are unclickable', async () => {
     // Set up a mock canvas environment
     HTMLCanvasElement.prototype.getContext = () => {
       const canvas = createCanvas(2000, 2000);

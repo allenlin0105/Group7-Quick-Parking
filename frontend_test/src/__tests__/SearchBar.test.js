@@ -13,7 +13,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-it('routes to /search', async () => {
+it('routes to /carowner/search/ when car is found', async () => {
   // Render the component
   await act(async () => {
     render(<Home />)
@@ -30,7 +30,7 @@ it('routes to /search', async () => {
   // expect(window.location.pathname).toBe('/guard/history');
 });
 
-it('routes to /search when car not found', async () => {
+it('routes to /carowner/not_found/ when car not found', async () => {
 
   server.use(
     rest.post(`${baseURL}/find_car`, async (req, res, ctx) => {
