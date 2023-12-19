@@ -42,7 +42,7 @@ export default function Home() {
             </div>
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <div>
-                    <p>停車場空位： <span className="availnum">{availableSlots}</span> &nbsp;/ {totalSlots}</p>
+                    <p>停車場空位： <span className="availnum" data-testid="availSpace">{availableSlots}</span> &nbsp;/&nbsp; <span data-testid="totalSpace">{totalSlots}</span></p>
                 </div>         
             </div>
             <Plan clickable={false}/>

@@ -18,7 +18,7 @@ const mockPlate = makeid(10)
 
 // No authenitcation 401
 
-describe("POST /usage_rate", () => {
+describe("POST /usage_rate (no auth)", () => {
   test("should return 401", async () => {
     const response = await request(app)
       .post("/usage_rate", {})
@@ -29,7 +29,7 @@ describe("POST /usage_rate", () => {
   });
 });
 
-describe("POST /space_info", () => {
+describe("POST /space_info (no auth)", () => {
   test("should return 401", async () => {
     const response = await request(app)
       .post("/space_info", {})
@@ -38,6 +38,16 @@ describe("POST /space_info", () => {
         start_date: "2023-12-03",
         end_date: "2023-12-09"
       });
+    expect(response.statusCode).toBe(401);
+  });
+});
+
+describe("GET /abnormal (no auth)", () => {
+  test("should return 401", async () => {
+
+    const response = await request(app)
+      .get("/abnormal", {})
+
     expect(response.statusCode).toBe(401);
   });
 });
@@ -56,8 +66,7 @@ describe("GET /available_space", () => {
   });
 });
 
-// Invalid user
-describe("POST /login", () => {
+describe("POST /login (invalid user)", () => {
   test("should return failed", async () => {
     const response = await request(app)
       .post("/login", {}).send({
@@ -87,7 +96,7 @@ describe("POST /login", () => {
 });
 
 // No car but leave
-describe("POST /leave", () => {
+describe("POST /leave (no car)", () => {
   test("should return no car", async () => {
     const response = await request(app)
       .post("/leave", {})
@@ -115,8 +124,8 @@ describe("POST /park", () => {
   });
 });
 
-describe("POST /park", () => {
-  test("should return space_id", async () => {
+describe("POST /park (space is not available)", () => {
+  test("should return space_id=-1", async () => {
     const response = await request(app)
       .post("/park", {})
       .set('authorization', `Bearer ${token}`)
@@ -130,7 +139,7 @@ describe("POST /park", () => {
 });
 
 // Find non-existent car
-describe("POST /find_car", () => {
+describe("POST /find_car (non-existent car)", () => {
   test("should return not found", async () => {
     const notExistPlate = makeid(10)
     const response = await request(app)

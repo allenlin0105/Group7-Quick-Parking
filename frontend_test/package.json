@@ -16,7 +16,6 @@
     "@mui/material": "^5.14.19",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
@@ -32,7 +31,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage --watchAll=false --silent --verbose --transformIgnorePatterns 'node_modules/(?!my-library-dir)/'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -54,6 +53,13 @@
     ]
   },
   "devDependencies": {
-    "react-test-renderer": "^18.2.0"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@testing-library/user-event": "^14.5.1",
+    "canvas": "^2.11.2",
+    "jest-canvas-mock": "^2.5.2",
+    "msw": "1.3.2",
+    "react-test-renderer": "^18.2.0",
+    "resize-observer-polyfill": "^1.5.1",
+    "undici": "^6.0.1"
   }
 }

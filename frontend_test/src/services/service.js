@@ -68,3 +68,12 @@ export function postPark(plate, space_id) {
     "space_id": space_id - 1,
   });
 }
+
+export function getWarnings() {
+  const token = localStorage.getItem('token');
+  return client.get("/abnormal", 
+  {
+    headers: {"authorization": 'Bearer ' + token}
+  });
+}
+

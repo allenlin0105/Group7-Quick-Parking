@@ -3,7 +3,7 @@ import './Plan.css';
 import planData from './Plan.json'; // Path to your JSON file
 import { useNavigate } from 'react-router-dom';
 import PlanDialog from './PlanDialog';
-import { getAvailableSpace } from '../services/service';
+import { getAvailableSpace, getWarnings } from '../services/service';
 
 export default function Plan(props) {
     const { 
@@ -24,10 +24,29 @@ export default function Plan(props) {
     const canvasRef = useRef(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false); // https://mui.com/material-ui/react-dialog/#form-dialogs
+    const [warningSet, setWarningSet] = useState(new Set([]));
+
     const calculateCanvasPosition = () => {
         const canvas = canvasRef.current;
         return canvas ? canvas.getBoundingClientRect().top : 0;
     };
+    useEffect(() => {
+        const updateWarningSet = async () => {
+            try {
+                // Replace this with your actual logic to get warning list
+                const fetchedWarnings = await getWarnings(); // This is a placeholder function
+                // console.log(fetchedWarnings);
+                if (fetchedWarnings.data && fetchedWarnings.data.length !== 0) {
+                    setCLickedSpacdId(Math.min(...fetchedWarnings.data)-1);
+                }
+                setWarningSet(new Set(fetchedWarnings.data)); // Assuming each warning has a unique 'id'
+            } catch (e) {
+                console.error("Error fetching warnings:", e);
+            }
+        };
+
+        updateWarningSet();
+    }, []); 
     useEffect(() => {
         if (!guard) {
             const setCanvasHeight = () => {
@@ -159,7 +178,10 @@ export default function Plan(props) {
                                 ctx.rotate(space.r * Math.PI / 180);
                                 if (guard) {
                                     ctx.globalAlpha = 0.66;
-                                    ctx.fillStyle = '#857C7C';  // Light background color for unoccupied
+                                    if (warningSet.has(space.id - 1))
+                                        ctx.fillStyle = '#D24545';
+                                    else
+                                        ctx.fillStyle = '#857C7C';  // Light background color for unoccupied
                                     ctx.fillRect(-space.w / 2,-space.h / 2, space.w, space.h);
                                     ctx.drawImage(carImage, -space.w / 2, -space.h / 2, space.w, space.h);
                                     ctx.globalAlpha = 1;
@@ -172,17 +194,19 @@ export default function Plan(props) {
                                     ctx.drawImage(carImage, -space.w / 2, -space.h / 2, space.w, space.h);
                                 }
                                 ctx.restore();
-                                if (locatedSpaceId && space.id === locatedSpaceId) {
-                                    const locImage = new Image();
-                                    locImage.src = '/images/location.png';
-                                    locImage.onload = () => {
-                                        ctx.save();
-                                        ctx.translate(space.x, space.y);
-                                        const sz = 1.1, w = 37.21 / sz, h = 54.59 / sz;
-                                        ctx.drawImage(locImage, (-w)/2, -(h), w, h);
-                                        ctx.restore();
+                                if ((locatedSpaceId && space.id === locatedSpaceId) ||
+                                    (guard && space.id === clickedSpacdId)) {
+                                    if (!guard) {
+                                        const locImage = new Image();
+                                        locImage.src = '/images/location.png';
+                                        locImage.onload = () => {
+                                            ctx.save();
+                                            ctx.translate(space.x, space.y);
+                                            const sz = 1.1, w = 37.21 / sz, h = 54.59 / sz;
+                                            ctx.drawImage(locImage, (-w)/2, -(h), w, h);
+                                            ctx.restore();
+                                        }
                                     }
-                        
                                     // Scroll the window or container to the located space
                                     let scrollX = space.x - window.innerWidth / 2;
                                     // Ensure the scroll position is within the bounds
@@ -209,13 +233,36 @@ export default function Plan(props) {
                             ctx.textBaseline = 'middle'; // Center text vertically
                             ctx.fillText(space.id.toString().padStart(2, '0'), 0, 0); // Draw text at the center of the rectangle
                             ctx.restore();
+                            if (!guard && space.id === clickedSpacdId) {
+                                const locImage = new Image();
+                                locImage.src = '/images/location.png';
+                                locImage.onload = () => {
+                                    ctx.save();
+                                    ctx.translate(space.x, space.y);
+                                    const sz = 1.1, w = 37.21 / sz, h = 54.59 / sz;
+                                    ctx.drawImage(locImage, (-w)/2, -(h), w, h);
+                                    ctx.restore();
+                                }
+                    
+                                // Scroll the window or container to the located space
+                                let scrollX = space.x - window.innerWidth / 2;
+                                // Ensure the scroll position is within the bounds
+                                const containerRect = containerRef.current.getBoundingClientRect();
+                                scrollX = Math.max(0, scrollX);
+                                scrollX = Math.min(containerRef.current.scrollWidth - containerRect.width, scrollX);
+                                containerRef.current.scrollTo({
+                                    left: scrollX,
+                                    top: space.y - 60,
+                                    behavior: 'smooth'
+                                });
+                            }
                         }
                     });
                 }
             };
         };
         drawCanvas();
-    }, [plan, mouse, hoverSpacdId, selectedSpacdId, isEditable, guard, locatedSpaceId]);
+    }, [plan, mouse, hoverSpacdId, selectedSpacdId, isEditable, guard, locatedSpaceId, clickedSpacdId, warningSet]);
 
     const isMouseOverspace = (x, y, space) => {
         // Translate mouse coordinates to the space's coordinate system
@@ -354,8 +401,6 @@ export default function Plan(props) {
                 open={open} 
                 onClose={handleClose}
                 spaceId={clickedSpacdId}
-                contentText="To subscribe to this website, please enter your email address here. We will send updates occasionally."
-                textFieldLabel="Email Address"
             />
             <canvas
                 ref={canvasRef}
