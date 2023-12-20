@@ -7,8 +7,8 @@ import DayUsagePlot from "./DayUsagePlot.js";
 import { format } from "date-fns"
 
 export default function Home() {
-    const [availableSlots, setAvailableSlots] = useState(0); // 初始可停車位數量
-    const [totalSlots, setTotalSlots] = useState(0);
+    const [availableSlots, setAvailableSlots] = useState(null); // 初始可停車位數量
+    const [totalSlots, setTotalSlots] = useState(null);
     const [today, setToday] = useState(new Date());
 
     useEffect(() => {

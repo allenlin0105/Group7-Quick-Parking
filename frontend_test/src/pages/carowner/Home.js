@@ -7,8 +7,8 @@ import { findCar } from '../../services/service';
 import SearchBar from "../../components/SearchBar";
 
 export default function Home() {
-    const [availableSlots, setAvailableSlots] = useState(46); // 初始可停車位數量
-    const [totalSlots, setTotalSlots] = useState(0);
+    const [availableSlots, setAvailableSlots] = useState(null); // 初始可停車位數量
+    const [totalSlots, setTotalSlots] = useState(null);
 
     const setSpaceNumber = async() => {
         const { data } = await getAvailalbeSpace();
