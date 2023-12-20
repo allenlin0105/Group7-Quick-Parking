@@ -127,9 +127,9 @@ export default function Plan(props) {
                 console.error("Error:", e);
             }
         }
-        if (editable === false)
+        if (editable === false || locatedSpaceId === null)
             handleGetAvailableSpace();
-    }, [open, editable])
+    }, [open, editable, locatedSpaceId])
 
     useEffect(() => {
         const drawCanvas = () => {
@@ -262,7 +262,7 @@ export default function Plan(props) {
             };
         };
         drawCanvas();
-    }, [plan, mouse, hoverSpacdId, selectedSpacdId, isEditable, guard, locatedSpaceId, clickedSpacdId, warningSet]);
+    }, [plan, mouse, hoverSpacdId, selectedSpacdId, isEditable, guard, clickedSpacdId, warningSet]);
 
     const isMouseOverspace = (x, y, space) => {
         // Translate mouse coordinates to the space's coordinate system
