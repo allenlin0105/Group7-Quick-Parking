@@ -22,6 +22,7 @@ export default function Leaving() {
     const [startTimeStr, setStartTimeStr] = useState('');
     const [currentTimeStr, setCurrentTimeStr] = useState('');
     const [duration, setDuration] = useState('');
+    const [justLeave, setJustLeave] = useState(false);
 
     useEffect(() => {
         const handleGetCars = async () => {
@@ -56,6 +57,7 @@ export default function Leaving() {
                     setSpaceId(data.space_id + 1);
                     setStartTime(data.start_time);
                     found = true;
+                    setJustLeave(false);
                 } catch (e) {
                     console.error("Error:", e);
                     found = true;
@@ -123,6 +125,7 @@ export default function Leaving() {
         const handleLeave = async (space_id) => {
             try {
                 await leave(space_id);
+                setJustLeave(true);
             } catch (e) {
                 console.error("Error:", e);
             }
@@ -162,12 +165,12 @@ export default function Leaving() {
                     <p className = "info">目前時間：{currentTimeStr}</p>
                     <p className = "info">到目前共計 {duration} 小時</p>
                     <h2 className='subtitle'>停車位置</h2>
-                    <Plan clicakble={false} locatedSpaceId={spaceId}/> {/* TODO: pass the availableParking*/}
+                    <Plan clicakble={false} locatedSpaceId={spaceId} justLeave={justLeave}/> {/* TODO: pass the availableParking*/}
                     </div>
             ) : (
                 <div>
                     <h1 className='title'>離場系統</h1>
-                    <Plan clickable={false} locatedSpaceId={null}/>
+                    <Plan clickable={false} locatedSpaceId={null} justLeave={justLeave}/>
                 </div>
             )}
             <Dialog open={open} onClose={handleCloseDialog} 

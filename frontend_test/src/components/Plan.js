@@ -12,6 +12,7 @@ export default function Plan(props) {
         locatedSpaceId = null, 
         clickable = true,
         autoPark = false,
+        justLeave = false,
     } = props;
     const containerRef = useRef(null);
     const initPlan = editable ? [] : planData;
@@ -35,9 +36,8 @@ export default function Plan(props) {
             try {
                 // Replace this with your actual logic to get warning list
                 const fetchedWarnings = await getWarnings(); // This is a placeholder function
-                // console.log(fetchedWarnings);
                 if (fetchedWarnings.data && fetchedWarnings.data.length !== 0) {
-                    setCLickedSpacdId(Math.min(...fetchedWarnings.data)-1);
+                        setCLickedSpacdId(Math.min(...fetchedWarnings.data)-1);
                 }
                 setWarningSet(new Set(fetchedWarnings.data)); // Assuming each warning has a unique 'id'
             } catch (e) {
@@ -45,7 +45,8 @@ export default function Plan(props) {
             }
         };
 
-        updateWarningSet();
+        if (guard === true)
+            updateWarningSet();
     }, []); 
     useEffect(() => {
         if (!guard) {
@@ -129,7 +130,7 @@ export default function Plan(props) {
         }
         if (editable === false)
             handleGetAvailableSpace();
-    }, [open, editable])
+    }, [open, editable, justLeave])
 
     useEffect(() => {
         const drawCanvas = () => {
@@ -279,7 +280,7 @@ export default function Plan(props) {
     }
 
     const handleCanvasClick = (event) => {
-        if (!clickable)
+        if (clickable === false)
             return;
         const rect = canvasRef.current.getBoundingClientRect();
         const x = event.clientX - rect.left;
