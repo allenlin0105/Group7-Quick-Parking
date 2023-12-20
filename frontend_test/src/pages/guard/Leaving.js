@@ -123,6 +123,7 @@ export default function Leaving() {
         const handleLeave = async (space_id) => {
             try {
                 await leave(space_id);
+                setSpaceId(null);
             } catch (e) {
                 console.error("Error:", e);
             }
