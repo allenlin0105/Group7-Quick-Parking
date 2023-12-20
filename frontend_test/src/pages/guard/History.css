@@ -29,6 +29,7 @@
   justify-content: center;
   height: 100%;
   background-color: transparent;
+  text-align: center;
 }
 
 .non-all-day-event-container {
@@ -39,6 +40,7 @@
   height: 100%;
   gap: 0.5em;
   overflow: hidden;
+  text-align: center;
 }
 
 .car-number {
